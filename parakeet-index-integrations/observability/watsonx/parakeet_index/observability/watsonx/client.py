@@ -9,8 +9,8 @@ from ibm_aigov_facts_client import (
 )
 from ibm_cloud_sdk_core.authenticators import Authenticator as IBMAuthenticator
 from parakeet_index.core.bridge.pydantic import BaseModel, PrivateAttr
-from parakeet_index.core.utils import validate_enum
 from parakeet_index.core.utils.retry import retry, stop_after_attempt
+from parakeet_index.core.utils.validation import validate_enum
 from parakeet_index.observability.watsonx.enums import Region, TaskType
 from parakeet_index.observability.watsonx.integrated_system import (
     IntegratedSystemCredentials,

@@ -7,7 +7,7 @@ from parakeet_index.core.llms import (
     ChatResponse,
     CompletionResponse,
 )
-from parakeet_index.core.utils import validate_enum
+from parakeet_index.core.utils.validation import validate_enum
 from parakeet_index.llms.watsonx.supporting_classes.enums import Region
 
 

@@ -3,7 +3,7 @@ import uuid
 from typing import Any
 
 from parakeet_index.core.bridge.pydantic import BaseModel
-from parakeet_index.core.utils import validate_enum
+from parakeet_index.core.utils.validation import validate_enum
 from parakeet_index.observability.watsonx.enums import DataSetType
 from parakeet_index.observability.watsonx.integrated_system import (
     IntegratedSystemCredentials,

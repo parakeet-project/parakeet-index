@@ -1,7 +1,7 @@
 import logging
 from typing import TYPE_CHECKING, Any
 
-from parakeet_index.core.utils import validate_type
+from parakeet_index.core.utils.validation import validate_type
 from parakeet_index.observability.watsonx.authenticators import (
     CloudPakForDataAuthenticator,
     IAMAuthenticator,

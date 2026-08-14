@@ -10,7 +10,7 @@ from parakeet_index.core.instrumentation.events.embedding import (
     EmbeddingEndEvent,
     EmbeddingStartEvent,
 )
-from parakeet_index.core.utils import validate_enum
+from parakeet_index.core.utils.validation import validate_enum
 
 dispatcher = get_dispatcher(__name__)
 Embedding = list[float]

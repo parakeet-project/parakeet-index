@@ -4,9 +4,9 @@ from typing import Any
 import httpx
 from pydantic import Field, PrivateAttr, SecretStr, field_validator
 
-from parakeet_index_utils import validate_enum
 from parakeet_index_utils.http.authenticators.base import BaseAuthenticator
 from parakeet_index_utils.http.exceptions import HttpAuthenticationError
+from parakeet_index_utils.validation import validate_enum
 
 
 class OAuth2GrantType:

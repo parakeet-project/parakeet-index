@@ -2,7 +2,7 @@ from typing import Any
 
 from parakeet_index.core.bridge.pydantic import BaseModel, Field, field_validator
 from parakeet_index.core.llms.enums import MessageRole
-from parakeet_index.core.utils import validate_enum
+from parakeet_index.core.utils.validation import validate_enum
 
 
 class ChatMessage(BaseModel):

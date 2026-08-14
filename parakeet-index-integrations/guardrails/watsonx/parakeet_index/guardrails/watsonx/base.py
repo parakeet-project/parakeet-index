@@ -3,9 +3,9 @@ from typing import Any
 from parakeet_index.core.bridge.pydantic import Field, PrivateAttr, SecretStr
 from parakeet_index.core.guardrails import BaseGuardrail, GuardrailResponse
 from parakeet_index.core.guardrails.enums import Direction
-from parakeet_index.core.utils import validate_enum
 from parakeet_index.core.utils.http import HttpService
 from parakeet_index.core.utils.http.authenticators import IBMIAMAuthenticator
+from parakeet_index.core.utils.validation import validate_enum
 from parakeet_index.guardrails.watsonx.supporting_classes.enums import Region
 
 
