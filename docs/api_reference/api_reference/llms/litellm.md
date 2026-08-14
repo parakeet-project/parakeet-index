@@ -5,13 +5,13 @@ title: LiteLLM
 === "pip"
 
     ```bash
-    $ pip install parakeet-indexllms-litellm
+    $ pip install parakeet-index-llms-litellm
     ```
 
 === "uv"
 
     ```bash
-    $ uv add parakeet-indexllms-litellm
+    $ uv add parakeet-index-llms-litellm
     ```
 
 ::: parakeet_index.llms.litellm

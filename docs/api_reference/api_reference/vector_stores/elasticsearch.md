@@ -1,13 +1,13 @@
 === "pip"
 
     ```bash
-    $ pip install parakeet-indexvector-stores-elasticsearch
+    $ pip install parakeet-index-vector-stores-elasticsearch
     ```
 
 === "uv"
 
     ```bash
-    $ uv add parakeet-indexvector-stores-elasticsearch
+    $ uv add parakeet-index-vector-stores-elasticsearch
     ```
 
 ::: parakeet_index.vector_stores.elasticsearch

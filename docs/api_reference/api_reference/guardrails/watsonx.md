@@ -5,13 +5,13 @@ title: watsonx
 === "pip"
 
     ```bash
-    $ pip install parakeet-indexguardrails-watsonx
+    $ pip install parakeet-index-guardrails-watsonx
     ```
 
 === "uv"
 
     ```bash
-    $ uv add parakeet-indexguardrails-watsonx
+    $ uv add parakeet-index-guardrails-watsonx
     ```
 
 ::: parakeet_index.guardrails.watsonx.WatsonxGuardrail

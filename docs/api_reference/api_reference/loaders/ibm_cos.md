@@ -5,13 +5,13 @@ title: IBM COS
 === "pip"
 
     ```bash
-    $ pip install parakeet-indexloaders-ibm-cos
+    $ pip install parakeet-index-loaders-ibm-cos
     ```
 
 === "uv"
 
     ```bash
-    $ uv add parakeet-indexloaders-ibm-cos
+    $ uv add parakeet-index-loaders-ibm-cos
     ```
 
 ::: parakeet_index.loaders.ibm_cos

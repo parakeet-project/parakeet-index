@@ -5,13 +5,13 @@ title: watsonx
 === "pip"
 
     ```bash
-    $ pip install parakeet-indexobservability-watsonx
+    $ pip install parakeet-index-observability-watsonx
     ```
 
 === "uv"
 
     ```bash
-    $ uv add parakeet-indexobservability-watsonx
+    $ uv add parakeet-index-observability-watsonx
     ```
 
 ## Observability

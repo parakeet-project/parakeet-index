@@ -1,13 +1,13 @@
 === "pip"
 
     ```bash
-    $ pip install parakeet-indexvector-stores-chroma
+    $ pip install parakeet-index-vector-stores-chroma
     ```
 
 === "uv"
 
     ```bash
-    $ uv add parakeet-indexvector-stores-chroma
+    $ uv add parakeet-index-vector-stores-chroma
     ```
 
 ::: parakeet_index.vector_stores.chroma

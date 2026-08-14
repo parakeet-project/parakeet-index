@@ -5,13 +5,13 @@ title: Watson Discovery
 === "pip"
 
     ```bash
-    $ pip install parakeet-indexretrievers-watson-discovery
+    $ pip install parakeet-index-retrievers-watson-discovery
     ```
 
 === "uv"
 
     ```bash
-    $ uv add parakeet-indexretrievers-watson-discovery
+    $ uv add parakeet-index-retrievers-watson-discovery
     ```
 
 ::: parakeet_index.retrievers.watson_discovery

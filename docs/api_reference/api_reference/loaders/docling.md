@@ -1,13 +1,13 @@
 === "pip"
 
     ```bash
-    $ pip install parakeet-indexloaders-docling
+    $ pip install parakeet-index-loaders-docling
     ```
 
 === "uv"
 
     ```bash
-    $ uv add parakeet-indexloaders-docling
+    $ uv add parakeet-index-loaders-docling
     ```
 
 ::: parakeet_index.loaders.docling
