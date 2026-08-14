@@ -1,0 +1,113 @@
+site_name: 🦜 Parakeet Index
+repo_url: https://github.com/parakeet-project/parakeet-index
+
+markdown_extensions:
+  - toc:
+      title: "On this page"
+      permalink: "#"
+      toc_depth: 4
+  - attr_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      pygments_lang_class: true
+      linenums: true
+      linenums_style: pymdownx-inline
+  - pymdownx.inlinehilite
+  - md_in_html
+
+extra:
+  version: "0.1.0"
+extra_css:
+  - _static/css/style.css
+
+docs_dir: api_reference
+
+plugins:
+  - search
+  - include_dir_to_nav
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            filters:
+              - "!^_"
+            show_source: false
+            separate_signature: true
+            merge_init_into_class: true
+            docstring_style: google
+            docstring_options:
+              ignore_init_summary: true
+            heading_level: 2
+            members_order: source
+            show_signature_annotations: true
+            show_root_toc_entry: false
+          paths:
+            - ../../parakeet-index-core/
+            - ../../parakeet-index-integrations/embeddings/huggingface
+            - ../../parakeet-index-integrations/embeddings/watsonx
+            - ../../parakeet-index-integrations/guardrails/watsonx
+            - ../../parakeet-index-integrations/llms/litellm
+            - ../../parakeet-index-integrations/llms/watsonx
+            - ../../parakeet-index-integrations/observability/watsonx
+            - ../../parakeet-index-integrations/loaders/docling
+            - ../../parakeet-index-integrations/loaders/file
+            - ../../parakeet-index-integrations/loaders/ibm_cos
+            - ../../parakeet-index-integrations/loaders/watson_discovery
+            - ../../parakeet-index-integrations/retrievers/watson_discovery
+            - ../../parakeet-index-integrations/vector_stores/chroma
+            - ../../parakeet-index-integrations/vector_stores/elasticsearch
+
+nav:
+  - API Reference: index.md
+  - LLMs: llms/
+  - Embeddings: embeddings/
+  - Loaders: loaders/
+  - Text Chunkers: text_chunkers/
+  - Vector Stores: vector_stores/
+  - Retrievers: retrievers/
+  - Prompts: prompts/
+  - Evaluation: evaluation/
+  - Guardrails: guardrails/
+  - Observability: observability/
+  - Workflows:
+    - Overview: workflows/overview.md
+    - Run as a Server: workflows/run_server.md
+    - Benchmarks: workflows/benchmark_report.md
+    - Prebuilt:
+      - Document Ingestion:  workflows/prebuilt/document_ingestion.md
+
+theme:
+  name: material
+  custom_dir: overrides
+  favicon: _static/assets/favicon.png
+  logo: _static/assets/favicon.png
+  palette:
+    - scheme: default
+      media: "(prefers-color-scheme: light)"
+      primary: white
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      media: "(prefers-color-scheme: dark)"
+      primary: black
+      accent: purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.indexes
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow

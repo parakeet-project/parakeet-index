@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "parakeet-index-utils"
+version = "0.1.0"
+description = "This library contains common utilities used across various packages."
+authors = [{ name = "Leonardo Furnielis", email = "leonardofurnielis@outlook.com" }]
+license = { text = "Apache-2.0" }
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "httpx>=0.28.1,<1.0.0",
+    "pydantic>=2.13.4,<3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.1.1,<10.0.0",
+    "pytest-asyncio>=1.4.0,<2.0.0",
+    "pytest-mock>=3.15.1,<4.0.0",
+    "ruff>=0.15.20,<0.16.0",
+]
+
+[project.urls]
+Repository = "https://github.com/parakeet-project/parakeet-index/tree/main/parakeet-index-utils"
+
+[tool.hatch.build.targets.sdist]
+include = ["parakeet_index_utils/"]
+
+[tool.hatch.build.targets.wheel]
+include = ["parakeet_index_utils/"]

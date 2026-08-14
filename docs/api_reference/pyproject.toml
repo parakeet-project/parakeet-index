@@ -1,0 +1,14 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
+
+[tool.poetry]
+name = "parakeet-index-docs"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.14"
+mkdocs = ">=1.6.1,<2.0.0"
+mkdocs-material = ">=9.7.6,<10.0.0"
+mkdocstrings = { version = ">=1.0.3,<2.0.0", extras = ["python"] }
+mkdocs-include-dir-to-nav = ">=1.2.0,<2.0.0"
