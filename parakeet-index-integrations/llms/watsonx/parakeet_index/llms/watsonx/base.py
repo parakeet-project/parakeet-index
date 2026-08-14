@@ -1,7 +1,12 @@
 from typing import Any
 
 from parakeet_index.core.bridge.pydantic import Field, SecretStr, field_validator
-from parakeet_index.core.llms import BaseLLM, ChatMessage, ChatResponse, CompletionResponse
+from parakeet_index.core.llms import (
+    BaseLLM,
+    ChatMessage,
+    ChatResponse,
+    CompletionResponse,
+)
 from parakeet_index.core.utils import validate_enum
 from parakeet_index.llms.watsonx.supporting_classes.enums import Region
 

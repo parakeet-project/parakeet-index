@@ -1,15 +1,15 @@
 import json
 from typing import Any, Literal
 
+from ibm_watson_openscale.supporting_classes.enums import (
+    DataSetTypes,
+    TargetTypes,
+)
 from parakeet_index.core.bridge.pydantic import BaseModel
 from parakeet_index.observability.watsonx.supporting_classes.utils import (
     build_payload,
     suppress_output,
     validate_and_filter_dict,
-)
-from ibm_watson_openscale.supporting_classes.enums import (
-    DataSetTypes,
-    TargetTypes,
 )
 
 

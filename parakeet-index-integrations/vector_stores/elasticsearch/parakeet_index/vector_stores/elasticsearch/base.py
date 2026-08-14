@@ -95,7 +95,9 @@ class ElasticsearchVectorStore(BaseVectorStore):
         else:
             # Get embedding dims dynamically
             dims_length = len(
-                self.embed_model.embed_text("parakeet-index-vector-stores-elasticsearch")
+                self.embed_model.embed_text(
+                    "parakeet-index-vector-stores-elasticsearch"
+                )
             )
 
             index_mappings = {

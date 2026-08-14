@@ -9,7 +9,9 @@ from parakeet_index.observability.watsonx.integrated_system import (
     IntegratedSystemCredentials,
 )
 from parakeet_index.observability.watsonx.schemas import WatsonxMetricSpec
-from parakeet_index.observability.watsonx.supporting_classes.utils import suppress_output
+from parakeet_index.observability.watsonx.supporting_classes.utils import (
+    suppress_output,
+)
 
 
 class CustomMetrics(BaseModel):

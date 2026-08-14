@@ -1,7 +1,12 @@
 from typing import Any
 
 from parakeet_index.core.bridge.pydantic import Field, SecretStr
-from parakeet_index.core.llms import BaseLLM, ChatMessage, ChatResponse, CompletionResponse
+from parakeet_index.core.llms import (
+    BaseLLM,
+    ChatMessage,
+    ChatResponse,
+    CompletionResponse,
+)
 
 import litellm
 

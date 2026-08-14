@@ -3,6 +3,11 @@ import uuid
 from typing import Any
 
 import certifi
+from ibm_aigov_facts_client import (
+    DetachedPromptTemplate,
+    PromptTemplate,
+)
+from ibm_cloud_sdk_core.authenticators import Authenticator as IBMAuthenticator
 from parakeet_index.core.bridge.pydantic import BaseModel, PrivateAttr
 from parakeet_index.core.utils import validate_enum
 from parakeet_index.core.utils.retry import retry, stop_after_attempt
@@ -26,11 +31,6 @@ from parakeet_index.observability.watsonx.supporting_classes.utils import (
     validate_and_filter_dict,
     validate_container_id,
 )
-from ibm_aigov_facts_client import (
-    DetachedPromptTemplate,
-    PromptTemplate,
-)
-from ibm_cloud_sdk_core.authenticators import Authenticator as IBMAuthenticator
 
 os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 
