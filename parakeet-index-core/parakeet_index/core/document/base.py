@@ -25,6 +25,10 @@ class BaseDocument(BaseComponent, ABC):
         default=None,
         description="Embedding of the document.",
     )
+    parent_doc_id: str | None = Field(
+        default=None,
+        description="The Id of the parent document.",
+    )
 
     @field_validator("metadata", mode="before")
     @classmethod
@@ -97,6 +101,11 @@ class DocumentWithScore(BaseComponent):
     def metadata(self) -> dict:
         """Get document metadata."""
         return self.document.metadata
+
+    @property
+    def parent_doc_id(self) -> str | None:
+        """Get parent document Id."""
+        return self.document.parent_doc_id if isinstance(self.document, Document) else None
 
     def get_content(self) -> str:
         """Get document content."""

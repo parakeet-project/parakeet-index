@@ -4,7 +4,7 @@ import numpy as np
 from parakeet_index.core.bridge.pydantic import Field, field_validator
 from parakeet_index.core.embeddings import BaseEmbedding
 from parakeet_index.core.enums import SimilarityMode
-from parakeet_index.core.evaluation.base import BaseEvaluator
+from parakeet_index.core.evals.base import BaseEvaluator
 from parakeet_index.core.utils.validation import validate_enum
 
 
@@ -31,7 +31,7 @@ class ContextSimilarityEvaluator(BaseEvaluator):
 
     Example:
         ```python
-        from parakeet_index.core.evaluation import ContextSimilarityEvaluator
+        from parakeet_index.core.evals import ContextSimilarityEvaluator
         from parakeet_index.embedding.huggingface import HuggingFaceEmbedding
 
         embedding = HuggingFaceEmbedding()

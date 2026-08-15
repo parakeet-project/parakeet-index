@@ -71,16 +71,14 @@ class BaseTextChunker(TransformerComponent, DispatcherSpanMixin):
         for document in documents:
             texts = self._get_text_chunks(document.get_content())
             metadata = {**document.metadata}
+            is_multi_chunk = len(texts) > 1
 
             for text in texts:
-                if len(texts) > 1:
-                    metadata["ref_doc_id"] = document._id
-                    metadata["ref_doc_hash"] = document.hash
-
                 documents.append(
                     Document(
                         text=text,
                         metadata=metadata,
+                        parent_doc_id=document._id if is_multi_chunk else None,
                     ),
                 )
 
