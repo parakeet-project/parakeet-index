@@ -149,19 +149,19 @@ class ElasticsearchVectorStore(BaseVectorStore):
 
         vector_store_data = []
         for doc in documents:
-            _id = doc.id_ if doc.id_ else str(uuid.uuid4())
-            _metadata = {**doc.metadata, "hash": doc.hash}
-            _metadata_mapping = self._dynamic_metadata_mapping(_metadata)
+            id = doc.id_ if doc.id_ else str(uuid.uuid4())
+            metadata_mapping = self._dynamic_metadata_mapping(doc.metadata)
+
             vector_store_data.append(
                 {
                     "_index": self.index_name,
-                    "_id": _id,
+                    "_id": id,
                     self.text_field: doc.get_content(),
                     self.vector_field: doc.embedding
                     if doc.embedding
                     else self.embed_model.embed_text(doc.get_content()),
-                    "metadata": _metadata,
-                    **_metadata_mapping,
+                    "metadata": doc.metadata,
+                    **metadata_mapping,
                 },
             )
 

@@ -77,7 +77,7 @@ class ChromaVectorStore(BaseVectorStore):
         chroma_documents = []
 
         for doc in documents:
-            metadatas.append({**doc.metadata, "hash": doc.hash})
+            metadatas.append(doc.metadata)
 
             embeddings.append(
                 doc.embedding

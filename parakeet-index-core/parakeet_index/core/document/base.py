@@ -44,10 +44,7 @@ class BaseDocument(BaseComponent, ABC):
     @property
     @abstractmethod
     def hash(self) -> str:
-        """Get document hash."""
-        raise NotImplementedError(
-            f"{self.__class__.__name__} must implement the get_content() method"
-        )
+        """Get hash of document."""
 
 
 class Document(BaseDocument):
@@ -60,13 +57,13 @@ class Document(BaseDocument):
         return "Document"
 
     def get_content(self) -> str:
-        """Get the text content."""
+        """Get document content."""
         return self.text
 
     @computed_field
     @property
     def hash(self) -> str:
-        """Get document hash based on text content."""
+        """Get hash of document."""
         return str(sha256(str(self.text).encode("utf-8", "surrogatepass")).hexdigest())
 
 
