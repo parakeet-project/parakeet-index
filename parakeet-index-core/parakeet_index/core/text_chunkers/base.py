@@ -74,7 +74,7 @@ class BaseTextChunker(TransformerComponent, DispatcherSpanMixin):
 
             for text in texts:
                 if len(texts) > 1:
-                    metadata["ref_doc_id"] = document.id_
+                    metadata["ref_doc_id"] = document._id
                     metadata["ref_doc_hash"] = document.hash
 
                 documents.append(

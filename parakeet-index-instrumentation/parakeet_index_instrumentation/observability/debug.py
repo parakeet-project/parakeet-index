@@ -39,7 +39,7 @@ class DebugObservability(BaseObservability):
 
     def on_span_start(
         self,
-        id_: str,
+        _id: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         parent_id: str | None = None,
@@ -47,13 +47,13 @@ class DebugObservability(BaseObservability):
         **kwargs: Any,
     ) -> None:
         """Handle span start."""
-        span = Span(id_=id_, parent_id=parent_id, metadata=metadata or {})
+        span = Span(_id=_id, parent_id=parent_id, metadata=metadata or {})
         with self.lock:
-            self.open_spans[id_] = span
+            self.open_spans[_id] = span
 
     def on_span_end(
         self,
-        id_: str,
+        _id: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         result: Any | None = None,
@@ -61,7 +61,7 @@ class DebugObservability(BaseObservability):
     ) -> None:
         """Handle span end."""
         with self.lock:
-            span = self.open_spans.pop(id_, None)
+            span = self.open_spans.pop(_id, None)
             if span:
                 span.end_time = datetime.now()
                 span.duration = (span.end_time - span.start_time).total_seconds()
@@ -73,7 +73,7 @@ class DebugObservability(BaseObservability):
 
     def on_span_exception(
         self,
-        id_: str,
+        _id: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         err: BaseException | None = None,
@@ -81,7 +81,7 @@ class DebugObservability(BaseObservability):
     ) -> None:
         """Handle span exception."""
         with self.lock:
-            span = self.open_spans.pop(id_, None)
+            span = self.open_spans.pop(_id, None)
             if span:
                 span.metadata["error"] = str(err)
                 self.dropped_spans.append(span)
@@ -105,7 +105,7 @@ class DebugObservability(BaseObservability):
     ) -> list[Span]:
         """Recursively construct flattened span hierarchy using depth-first traversal."""
         result = [parent]
-        children = spans_by_parent.get(parent.id_, [])
+        children = spans_by_parent.get(parent._id, [])
 
         for child in children:
             result.extend(self._build_tree_by_parent(child, spans_by_parent))
@@ -125,9 +125,9 @@ class DebugObservability(BaseObservability):
         for s in all_spans:
             if s.parent_id is None:
                 continue
-            if not any(ns.id_ == s.parent_id for ns in all_spans):
+            if not any(ns._id == s.parent_id for ns in all_spans):
                 s.parent_id += "-missing"
-                all_spans.append(Span(id_=s.parent_id, parent_id=None))
+                all_spans.append(Span(_id=s.parent_id, parent_id=None))
 
         # Build index once for O(n) tree building
         spans_by_parent = self._build_spans_by_parent_index(all_spans)
@@ -152,21 +152,21 @@ class DebugObservability(BaseObservability):
 
                 duration_str = f"{span.duration:.6f}s" if span.duration else ""
                 tree.create_node(
-                    tag=f"{span.id_} (SPAN) - {duration_str}",
-                    identifier=span.id_,
+                    tag=f"{span._id} (SPAN) - {duration_str}",
+                    identifier=span._id,
                     parent=span.parent_id,
                     data=span.start_time,
                 )
 
                 # Add events that belong to this span if requested
                 if include_events:
-                    span_events = [e for e in self.events if e.span_id == span.id_]
+                    span_events = [e for e in self.events if e.span_id == span._id]
                     for event in sorted(span_events, key=lambda e: e.timestamp):
-                        event_id = f"event-{event.id_}"
+                        event_id = f"event-{event._id}"
                         tree.create_node(
                             tag=event.class_name(),
                             identifier=event_id,
-                            parent=span.id_,
+                            parent=span._id,
                             data=event.timestamp,
                         )
 
@@ -201,9 +201,9 @@ class DebugObservability(BaseObservability):
 
             # Add events as children
             for event in sorted(span_events, key=lambda e: e.timestamp):
-                event_id = f"event-{event.id_}"
+                event_id = f"event-{event._id}"
                 tree.create_node(
-                    tag=f"{event.class_name()}: {event.id_}",
+                    tag=f"{event.class_name()}: {event._id}",
                     identifier=event_id,
                     parent=span_id,
                     data=event.timestamp,

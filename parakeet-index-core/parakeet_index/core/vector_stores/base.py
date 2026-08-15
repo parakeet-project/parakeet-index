@@ -110,7 +110,7 @@ class BaseVectorStore(BaseComponent, DispatcherSpanMixin):
         """
         hits = self.get_all_documents()
 
-        ids = [doc.id_ for doc in hits]
+        ids = [doc._id for doc in hits]
         hashes = [doc.metadata.get("hash", "") for doc in hits]
         ref_hashes = [doc.metadata.get("ref_doc_hash", "") for doc in hits]
 

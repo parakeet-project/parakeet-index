@@ -127,7 +127,7 @@ class WatsonxObservability(BaseObservability):
 
     def on_span_start(
         self,
-        id_: str,
+        _id: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         parent_id: str | None = None,
@@ -135,6 +135,6 @@ class WatsonxObservability(BaseObservability):
         **kwargs: Any,
     ) -> None:
         """Handle span start."""
-        span = Span(id_=id_, parent_id=parent_id, metadata=metadata or {})
+        span = Span(_id=_id, parent_id=parent_id, metadata=metadata or {})
         with self.lock:
-            self.open_spans[id_] = span
+            self.open_spans[_id] = span

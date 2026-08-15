@@ -13,7 +13,7 @@ class BaseDocument(BaseComponent, ABC):
 
     model_config = {"arbitrary_types_allowed": True, "validate_assignment": True}
 
-    id_: str = Field(
+    _id: str = Field(
         default_factory=lambda: str(uuid.uuid4()),
         description="Unique Id of the document.",
     )
@@ -89,9 +89,9 @@ class DocumentWithScore(BaseComponent):
 
     # #### pass through properties to BaseDocument ####
     @property
-    def id_(self) -> str:
+    def _id(self) -> str:
         """Get document Id."""
-        return self.document.id_
+        return self.document._id
 
     @property
     def metadata(self) -> dict:

@@ -25,7 +25,7 @@ class UnifiedTestHandler(BaseObservability):
 
     def on_span_start(
         self,
-        id_: str,
+        _id: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         parent_id: str | None = None,
@@ -33,29 +33,29 @@ class UnifiedTestHandler(BaseObservability):
         **kwargs: Any,
     ) -> None:
         """Handle span start."""
-        self.span_enters.append(id_)
+        self.span_enters.append(_id)
 
     def on_span_end(
         self,
-        id_: str,
+        _id: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         result: Any | None = None,
         **kwargs: Any,
     ) -> None:
         """Handle span exit."""
-        self.span_exits.append(id_)
+        self.span_exits.append(_id)
 
     def on_span_exception(
         self,
-        id_: str,
+        _id: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         err: BaseException | None = None,
         **kwargs: Any,
     ) -> None:
         """Handle span exception."""
-        self.span_drops.append(id_)
+        self.span_drops.append(_id)
 
 
 def test_unified_handler_receives_events():

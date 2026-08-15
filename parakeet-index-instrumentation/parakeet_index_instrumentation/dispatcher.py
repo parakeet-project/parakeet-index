@@ -127,7 +127,7 @@ class Dispatcher(BaseModel):
 
     def span_start(
         self,
-        id_: str,
+        _id: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         parent_id: str | None = None,
@@ -135,13 +135,13 @@ class Dispatcher(BaseModel):
         **kwargs: Any,
     ) -> None:
         """
-        Send notice to handlers that a span with id_ has started.
+        Send notice to handlers that a span with _id has started.
 
         Advanced API: Most users should use @dispatcher.span decorator instead.
         """
         self._dispatch_to_handlers(
             "on_span_start",
-            id_=id_,
+            _id=_id,
             bound_args=bound_args,
             instance=instance,
             parent_id=parent_id,
@@ -151,20 +151,20 @@ class Dispatcher(BaseModel):
 
     def span_end(
         self,
-        id_: str,
+        _id: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         result: Any | None = None,
         **kwargs: Any,
     ) -> None:
         """
-        Send notice to handlers that a span with id_ is exiting.
+        Send notice to handlers that a span with _id is exiting.
 
         Advanced API: Most users should use @dispatcher.span decorator instead.
         """
         self._dispatch_to_handlers(
             "on_span_end",
-            id_=id_,
+            _id=_id,
             bound_args=bound_args,
             instance=instance,
             result=result,
@@ -173,20 +173,20 @@ class Dispatcher(BaseModel):
 
     def span_exception(
         self,
-        id_: str,
+        _id: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         err: BaseException | None = None,
         **kwargs: Any,
     ) -> None:
         """
-        Send notice to handlers that a span with id_ is being exited due an exception.
+        Send notice to handlers that a span with _id is being exited due an exception.
 
         Advanced API: Most users should use @dispatcher.span decorator instead.
         """
         self._dispatch_to_handlers(
             "on_span_exception",
-            id_=id_,
+            _id=_id,
             bound_args=bound_args,
             instance=instance,
             err=err,
@@ -254,19 +254,19 @@ class Dispatcher(BaseModel):
             if instance is not None:
                 actual_class = type(instance).__name__
                 method_name = func.__name__
-                id_ = f"{actual_class}.{method_name}-{uuid.uuid4()}"
+                _id = f"{actual_class}.{method_name}-{uuid.uuid4()}"
             else:
-                id_ = f"{func.__qualname__}-{uuid.uuid4()}"
+                _id = f"{func.__qualname__}-{uuid.uuid4()}"
             metadata = _active_context_metadata.get()
             result = None
 
             # Copy the current context
             context = copy_context()
 
-            token = active_span_id.set(id_)
+            token = active_span_id.set(_id)
             parent_id = None if token.old_value is Token.MISSING else token.old_value
             self.span_start(
-                id_=id_,
+                _id=_id,
                 bound_args=bound_args,
                 instance=instance,
                 parent_id=parent_id,
@@ -284,7 +284,7 @@ class Dispatcher(BaseModel):
                     result = None if future.exception() else future.result()
 
                     self.span_end(
-                        id_=span_id,
+                        _id=span_id,
                         bound_args=bound_args,
                         instance=instance,
                         result=result,
@@ -293,7 +293,7 @@ class Dispatcher(BaseModel):
                 except BaseException as e:
                     self.event(SpanExceptionEvent(span_id=span_id, err_str=str(e)))
                     self.span_exception(
-                        id_=span_id, bound_args=bound_args, instance=instance, err=e
+                        _id=span_id, bound_args=bound_args, instance=instance, err=e
                     )
                     raise
                 finally:
@@ -309,7 +309,7 @@ class Dispatcher(BaseModel):
                     new_future.add_done_callback(
                         partial(
                             handle_future_result,
-                            span_id=id_,
+                            span_id=_id,
                             bound_args=bound_args,
                             instance=instance,
                             context=context,
@@ -318,13 +318,13 @@ class Dispatcher(BaseModel):
                     return new_future
                 else:
                     self.span_end(
-                        id_=id_, bound_args=bound_args, instance=instance, result=result
+                        _id=_id, bound_args=bound_args, instance=instance, result=result
                     )
                     return result
             except BaseException as e:
-                self.event(SpanExceptionEvent(span_id=id_, err_str=str(e)))
+                self.event(SpanExceptionEvent(span_id=_id, err_str=str(e)))
                 self.span_exception(
-                    id_=id_, bound_args=bound_args, instance=instance, err=e
+                    _id=_id, bound_args=bound_args, instance=instance, err=e
                 )
                 raise
             finally:
@@ -339,15 +339,15 @@ class Dispatcher(BaseModel):
             if instance is not None:
                 actual_class = type(instance).__name__
                 method_name = func.__name__
-                id_ = f"{actual_class}.{method_name}-{uuid.uuid4()}"
+                _id = f"{actual_class}.{method_name}-{uuid.uuid4()}"
             else:
-                id_ = f"{func.__qualname__}-{uuid.uuid4()}"
+                _id = f"{func.__qualname__}-{uuid.uuid4()}"
             metadata = _active_context_metadata.get()
 
-            token = active_span_id.set(id_)
+            token = active_span_id.set(_id)
             parent_id = None if token.old_value is Token.MISSING else token.old_value
             self.span_start(
-                id_=id_,
+                _id=_id,
                 bound_args=bound_args,
                 instance=instance,
                 parent_id=parent_id,
@@ -356,14 +356,14 @@ class Dispatcher(BaseModel):
             try:
                 result = await func(*args, **kwargs)
             except BaseException as e:
-                self.event(SpanExceptionEvent(span_id=id_, err_str=str(e)))
+                self.event(SpanExceptionEvent(span_id=_id, err_str=str(e)))
                 self.span_exception(
-                    id_=id_, bound_args=bound_args, instance=instance, err=e
+                    _id=_id, bound_args=bound_args, instance=instance, err=e
                 )
                 raise
             else:
                 self.span_end(
-                    id_=id_, bound_args=bound_args, instance=instance, result=result
+                    _id=_id, bound_args=bound_args, instance=instance, result=result
                 )
                 return result
             finally:

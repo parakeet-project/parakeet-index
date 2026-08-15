@@ -149,7 +149,7 @@ class ElasticsearchVectorStore(BaseVectorStore):
 
         vector_store_data = []
         for doc in documents:
-            id = doc.id_ if doc.id_ else str(uuid.uuid4())
+            id = doc._id if doc._id else str(uuid.uuid4())
             metadata_mapping = self._dynamic_metadata_mapping(doc.metadata)
 
             vector_store_data.append(
@@ -173,7 +173,7 @@ class ElasticsearchVectorStore(BaseVectorStore):
         )
         print(f"Added {len(vector_store_data)} documents to `{self.index_name}`")
 
-        return [doc.id_ for doc in documents]
+        return [doc._id for doc in documents]
 
     def _query_documents(self, query: str, top_k: int = 4) -> list[DocumentWithScore]:
         """Performs a similarity search for the top-k most similar documents."""
@@ -209,7 +209,7 @@ class ElasticsearchVectorStore(BaseVectorStore):
         return [
             DocumentWithScore(
                 document=Document(
-                    id_=hit["_id"],
+                    _id=hit["_id"],
                     text=hit["_source"]["text"],
                     metadata=hit["_source"]["metadata"],
                 ),
@@ -257,7 +257,7 @@ class ElasticsearchVectorStore(BaseVectorStore):
 
         documents = [
             Document(
-                id_=hit["_id"],
+                _id=hit["_id"],
                 metadata=hit["_source"].get("metadata", {}),
                 embedding=hit["_source"].get(self.vector_field),
                 text=hit["_source"].get(self.text_field, ""),
@@ -274,7 +274,7 @@ class ElasticsearchVectorStore(BaseVectorStore):
             documents.extend(
                 [
                     Document(
-                        id_=hit["_id"],
+                        _id=hit["_id"],
                         metadata=hit["_source"].get("metadata", {}),
                         embedding=hit["_source"].get(self.vector_field),
                         text=hit["_source"].get(self.text_field, ""),

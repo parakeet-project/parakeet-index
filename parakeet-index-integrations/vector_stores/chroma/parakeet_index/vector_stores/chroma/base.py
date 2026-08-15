@@ -84,7 +84,7 @@ class ChromaVectorStore(BaseVectorStore):
                 if doc.embedding
                 else self.embed_model.embed_text(doc.get_content()),
             )
-            ids.append(doc.id_ if doc.id_ else str(uuid.uuid4()))
+            ids.append(doc._id if doc._id else str(uuid.uuid4()))
             chroma_documents.append(doc.get_content())
 
         self._collection.add(
@@ -107,7 +107,7 @@ class ChromaVectorStore(BaseVectorStore):
 
         return [
             DocumentWithScore(
-                document=Document(id_=result[0], text=result[1], metadata=result[2]),
+                document=Document(_id=result[0], text=result[1], metadata=result[2]),
                 score=result[3],
             )
             for result in zip(

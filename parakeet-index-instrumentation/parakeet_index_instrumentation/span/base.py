@@ -10,7 +10,7 @@ class BaseSpan(BaseModel):
 
     model_config = {"arbitrary_types_allowed": True}
 
-    id_: str = Field(
+    _id: str = Field(
         default_factory=lambda: str(uuid4()), description="The Id of span."
     )
     parent_id: str | None = Field(default=None, description="The Id of parent span.")
