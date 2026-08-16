@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "parakeet-index"
-version = "0.1.0a1"
+version = "0.1.0"
 description = "Unleash smart AI applications."
 authors = [{ name = "Leonardo Furnielis", email = "leonardofurnielis@outlook.com" }]
 license = { text = "Apache-2.0" }
@@ -18,7 +18,7 @@ classifiers = [
 ]
 
 dependencies = [
-
+    "parakeet-index-core>=0.1.0.post1,<0.2.0",
 ]
 
 [project.optional-dependencies]
