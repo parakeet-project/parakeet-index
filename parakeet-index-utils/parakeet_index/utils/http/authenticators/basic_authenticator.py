@@ -1,9 +1,8 @@
 import base64
 
+from parakeet_index.utils.http.authenticators.base import BaseAuthenticator
+from parakeet_index.utils.http.exceptions import HttpAuthenticationError
 from pydantic import Field, SecretStr
-
-from parakeet_index_utils.http.authenticators.base import BaseAuthenticator
-from parakeet_index_utils.http.exceptions import HttpAuthenticationError
 
 
 class BasicAuthenticator(BaseAuthenticator):

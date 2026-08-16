@@ -27,7 +27,7 @@ dev = [
 Repository = "https://github.com/parakeet-project/parakeet-index/tree/main/parakeet-index-utils"
 
 [tool.hatch.build.targets.sdist]
-include = ["parakeet_index_utils/"]
+include = ["parakeet_index/"]
 
 [tool.hatch.build.targets.wheel]
-include = ["parakeet_index_utils/"]
+include = ["parakeet_index/"]

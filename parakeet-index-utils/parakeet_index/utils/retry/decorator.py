@@ -3,13 +3,13 @@ import functools
 import time
 from typing import Any, Callable, TypeVar
 
-from parakeet_index_utils.retry.protocols import (
+from parakeet_index.utils.retry.protocols import (
     RetryCondition,
     RetryState,
     StopCondition,
     WaitStrategy,
 )
-from parakeet_index_utils.retry.strategies import (
+from parakeet_index.utils.retry.strategies import (
     retry_if_exception,
     stop_after_attempt,
     wait_fixed,

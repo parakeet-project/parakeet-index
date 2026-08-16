@@ -3,13 +3,13 @@ from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
 
 import pytest
-from parakeet_index_utils.http.authenticators import (
+from parakeet_index.utils.http.authenticators import (
     BasicAuthenticator,
     NoAuthAuthenticator,
     OAuth2Authenticator,
     OAuth2GrantType,
 )
-from parakeet_index_utils.http.exceptions import HttpAuthenticationError
+from parakeet_index.utils.http.exceptions import HttpAuthenticationError
 from pydantic import ValidationError
 
 

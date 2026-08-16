@@ -1,6 +1,6 @@
 import random
 
-from parakeet_index_utils.retry.protocols import RetryState
+from parakeet_index.utils.retry.protocols import RetryState
 
 
 class _BaseRetryCondition:

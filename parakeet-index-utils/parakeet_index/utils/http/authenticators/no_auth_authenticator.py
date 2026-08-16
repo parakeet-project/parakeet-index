@@ -1,4 +1,4 @@
-from parakeet_index_utils.http.authenticators.base import BaseAuthenticator
+from parakeet_index.utils.http.authenticators.base import BaseAuthenticator
 
 
 class NoAuthAuthenticator(BaseAuthenticator):
