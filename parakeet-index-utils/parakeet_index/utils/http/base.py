@@ -1,16 +1,15 @@
 from typing import Any
 
 import httpx
-from pydantic import BaseModel, Field, PrivateAttr
-
-from parakeet_index_utils.http.authenticators import NoAuthAuthenticator
-from parakeet_index_utils.http.authenticators.base import BaseAuthenticator
-from parakeet_index_utils.http.exceptions import (
+from parakeet_index.utils.http.authenticators import NoAuthAuthenticator
+from parakeet_index.utils.http.authenticators.base import BaseAuthenticator
+from parakeet_index.utils.http.exceptions import (
     HttpConnectionError,
     HttpRequestError,
     HttpRequestTimeoutError,
 )
-from parakeet_index_utils.http.schemas import HttpResponse
+from parakeet_index.utils.http.schemas import HttpResponse
+from pydantic import BaseModel, Field, PrivateAttr
 
 
 class HttpService(BaseModel):

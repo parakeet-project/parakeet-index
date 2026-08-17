@@ -2,12 +2,12 @@ from unittest.mock import Mock, patch
 
 import httpx
 import pytest
-from parakeet_index_utils.http import HttpService
-from parakeet_index_utils.http.exceptions import (
+from parakeet_index.utils.http import HttpService
+from parakeet_index.utils.http.exceptions import (
     HttpConnectionError,
     HttpRequestTimeoutError,
 )
-from parakeet_index_utils.http.schemas import HttpResponse
+from parakeet_index.utils.http.schemas import HttpResponse
 
 
 class TestHttpServiceCore:

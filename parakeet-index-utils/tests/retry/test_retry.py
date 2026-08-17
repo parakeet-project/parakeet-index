@@ -1,5 +1,5 @@
 import pytest
-from parakeet_index_utils.retry import (
+from parakeet_index.utils.retry import (
     retry,
     retry_if_exception,
     retry_if_exception_type,
@@ -9,7 +9,7 @@ from parakeet_index_utils.retry import (
     wait_fixed,
     wait_random,
 )
-from parakeet_index_utils.retry.protocols import RetryState
+from parakeet_index.utils.retry.protocols import RetryState
 
 
 def test_retry_success():

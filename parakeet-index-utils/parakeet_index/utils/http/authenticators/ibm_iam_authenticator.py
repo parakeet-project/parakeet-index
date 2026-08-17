@@ -1,10 +1,9 @@
 from datetime import datetime, timedelta
 
 import httpx
+from parakeet_index.utils.http.authenticators.base import BaseAuthenticator
+from parakeet_index.utils.http.exceptions import HttpAuthenticationError
 from pydantic import Field, PrivateAttr, SecretStr
-
-from parakeet_index_utils.http.authenticators.base import BaseAuthenticator
-from parakeet_index_utils.http.exceptions import HttpAuthenticationError
 
 
 class IBMIAMAuthenticator(BaseAuthenticator):

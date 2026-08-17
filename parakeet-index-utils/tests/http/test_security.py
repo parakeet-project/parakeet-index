@@ -1,13 +1,13 @@
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
 
-from parakeet_index_utils.http import HttpService
-from parakeet_index_utils.http.authenticators import (
+from parakeet_index.utils.http import HttpService
+from parakeet_index.utils.http.authenticators import (
     BasicAuthenticator,
     OAuth2Authenticator,
     OAuth2GrantType,
 )
-from parakeet_index_utils.http.exceptions import HttpAuthenticationError
+from parakeet_index.utils.http.exceptions import HttpAuthenticationError
 
 
 class TestCredentialMasking:

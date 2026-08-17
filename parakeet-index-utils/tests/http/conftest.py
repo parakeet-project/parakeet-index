@@ -1,6 +1,6 @@
 import pytest
-from parakeet_index_utils.http import HttpService
-from parakeet_index_utils.http.authenticators import (
+from parakeet_index.utils.http import HttpService
+from parakeet_index.utils.http.authenticators import (
     BasicAuthenticator,
     OAuth2Authenticator,
     OAuth2GrantType,

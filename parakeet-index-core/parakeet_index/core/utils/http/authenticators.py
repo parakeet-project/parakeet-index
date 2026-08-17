@@ -1,4 +1,4 @@
-from parakeet_index_utils.http.authenticators import (
+from parakeet_index.utils.http.authenticators import (
     BasicAuthenticator,
     IBMIAMAuthenticator,
     NoAuthAuthenticator,

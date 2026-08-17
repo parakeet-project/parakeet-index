@@ -1,4 +1,4 @@
-from parakeet_index_utils.http import HttpService
+from parakeet_index.utils.http import HttpService
 
 __all__ = [
     "HttpService",

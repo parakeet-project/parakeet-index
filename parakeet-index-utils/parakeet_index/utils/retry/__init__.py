@@ -1,5 +1,5 @@
-from parakeet_index_utils.retry.decorator import retry
-from parakeet_index_utils.retry.strategies import (
+from parakeet_index.utils.retry.decorator import retry
+from parakeet_index.utils.retry.strategies import (
     retry_if_exception,
     retry_if_exception_type,
     stop_after_attempt,

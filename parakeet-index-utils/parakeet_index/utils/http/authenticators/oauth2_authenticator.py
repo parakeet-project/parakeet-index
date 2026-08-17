@@ -2,11 +2,10 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import httpx
+from parakeet_index.utils.http.authenticators.base import BaseAuthenticator
+from parakeet_index.utils.http.exceptions import HttpAuthenticationError
+from parakeet_index.utils.validation import validate_enum
 from pydantic import Field, PrivateAttr, SecretStr, field_validator
-
-from parakeet_index_utils.http.authenticators.base import BaseAuthenticator
-from parakeet_index_utils.http.exceptions import HttpAuthenticationError
-from parakeet_index_utils.validation import validate_enum
 
 
 class OAuth2GrantType:
