@@ -64,7 +64,9 @@ class IBMCosLoader(BaseLoader):
         bucket = ibm_s3.Bucket(self.bucket)
 
         # Deterministic (not random) path per bucket.
-        temp_dir = os.path.join(tempfile.gettempdir(), "parakeet-index-ibm-cos", self.bucket)
+        temp_dir = os.path.join(
+            tempfile.gettempdir(), "parakeet-index-ibm-cos", self.bucket
+        )
         os.makedirs(temp_dir, exist_ok=True)
 
         try:

@@ -129,7 +129,9 @@ async def test_full_strategy_deletes_documents_missing_from_batch(
     await workflow.run(documents=all_documents)
     assert len(doc_store.list_documents()) == len(all_documents)
 
-    remaining_documents = [doc for doc in load_documents() if doc.id_ != all_documents[0].id_]
+    remaining_documents = [
+        doc for doc in load_documents() if doc.id_ != all_documents[0].id_
+    ]
     await workflow.run(documents=remaining_documents)
 
     indexed_ids = {doc.id_ for doc in doc_store.list_documents()}
