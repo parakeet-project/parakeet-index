@@ -142,7 +142,7 @@ def test_dispatcher_span_args(mock_uuid, mock_span_start, mock_span_end):
     args, kwargs = mock_span_start.call_args
     assert args == ()
     assert kwargs == {
-        "_id": span_id,
+        "id_": span_id,
         "bound_args": bound_args,
         "instance": None,
         "parent_id": None,
@@ -152,7 +152,7 @@ def test_dispatcher_span_args(mock_uuid, mock_span_start, mock_span_end):
     args, kwargs = mock_span_end.call_args
     assert args == ()
     assert kwargs == {
-        "_id": span_id,
+        "id_": span_id,
         "bound_args": bound_args,
         "instance": None,
         "result": result,
@@ -174,7 +174,7 @@ def test_dispatcher_span_args_with_instance(mock_uuid, mock_span_start, mock_spa
     args, kwargs = mock_span_start.call_args
     assert args == ()
     assert kwargs == {
-        "_id": span_id,
+        "id_": span_id,
         "bound_args": bound_args,
         "instance": instance,
         "parent_id": None,
@@ -184,7 +184,7 @@ def test_dispatcher_span_args_with_instance(mock_uuid, mock_span_start, mock_spa
     args, kwargs = mock_span_end.call_args
     assert args == ()
     assert kwargs == {
-        "_id": span_id,
+        "id_": span_id,
         "bound_args": bound_args,
         "instance": instance,
         "result": result,
@@ -215,7 +215,7 @@ def test_dispatcher_span_drop_args(
     args, kwargs = mock_span_exception.call_args
     assert args == ()
     assert kwargs == {
-        "_id": span_id,
+        "id_": span_id,
         "bound_args": bound_args,
         "instance": instance,
         "err": value_error,
@@ -239,7 +239,7 @@ async def test_dispatcher_async_span_args(mock_uuid, mock_span_start, mock_span_
     args, kwargs = mock_span_start.call_args
     assert args == ()
     assert kwargs == {
-        "_id": span_id,
+        "id_": span_id,
         "bound_args": bound_args,
         "instance": None,
         "parent_id": None,
@@ -249,7 +249,7 @@ async def test_dispatcher_async_span_args(mock_uuid, mock_span_start, mock_span_
     args, kwargs = mock_span_end.call_args
     assert args == ()
     assert kwargs == {
-        "_id": span_id,
+        "id_": span_id,
         "bound_args": bound_args,
         "instance": None,
         "result": result,
@@ -274,7 +274,7 @@ async def test_dispatcher_async_span_args_with_instance(
     args, kwargs = mock_span_start.call_args
     assert args == ()
     assert kwargs == {
-        "_id": span_id,
+        "id_": span_id,
         "bound_args": bound_args,
         "instance": instance,
         "parent_id": None,
@@ -284,7 +284,7 @@ async def test_dispatcher_async_span_args_with_instance(
     args, kwargs = mock_span_end.call_args
     assert args == ()
     assert kwargs == {
-        "_id": span_id,
+        "id_": span_id,
         "bound_args": bound_args,
         "instance": instance,
         "result": result,
@@ -315,7 +315,7 @@ async def test_dispatcher_async_span_drop_args(
     args, kwargs = mock_span_exception.call_args
     assert args == ()
     assert kwargs == {
-        "_id": span_id,
+        "id_": span_id,
         "bound_args": bound_args,
         "instance": None,
         "err": cancelled_error,
@@ -349,7 +349,7 @@ async def test_dispatcher_async_span_drop_args_with_instance(
     args, kwargs = mock_span_exception.call_args
     assert args == ()
     assert kwargs == {
-        "_id": span_id,
+        "id_": span_id,
         "bound_args": bound_args,
         "instance": instance,
         "err": cancelled_error,
@@ -587,11 +587,11 @@ def test_span_naming_with_inheritance(mock_uuid, mock_span_start, mock_span_end)
 
     calls = mock_span_start.call_args_list
 
-    assert calls[0][1]["_id"] == "BaseClass.base_method-mock"
+    assert calls[0][1]["id_"] == "BaseClass.base_method-mock"
 
-    assert calls[1][1]["_id"] == "DerivedClass.base_method-mock"
+    assert calls[1][1]["id_"] == "DerivedClass.base_method-mock"
 
-    assert calls[2][1]["_id"] == "AnotherDerivedClass.derived_method-mock"
+    assert calls[2][1]["id_"] == "AnotherDerivedClass.derived_method-mock"
 
 
 @pytest.mark.asyncio
@@ -622,9 +622,9 @@ async def test_async_span_naming_with_inheritance(
 
     calls = mock_span_start.call_args_list
 
-    assert calls[0][1]["_id"] == "BaseClass.async_base_method-mock"
+    assert calls[0][1]["id_"] == "BaseClass.async_base_method-mock"
 
-    assert calls[1][1]["_id"] == "DerivedClass.async_base_method-mock"
+    assert calls[1][1]["id_"] == "DerivedClass.async_base_method-mock"
 
 
 @patch.object(Dispatcher, "span_end")
@@ -645,7 +645,7 @@ def test_span_naming_regular_functions_unchanged(
     mock_span_start.assert_called_once()
     call_kwargs = mock_span_start.call_args[1]
 
-    assert call_kwargs["_id"] == f"{regular_function.__qualname__}-mock"
+    assert call_kwargs["id_"] == f"{regular_function.__qualname__}-mock"
 
 
 @patch.object(Dispatcher, "span_end")
@@ -683,13 +683,13 @@ def test_span_naming_complex_inheritance(mock_uuid, mock_span_start, mock_span_e
 
     calls = mock_span_start.call_args_list
 
-    assert calls[0][1]["_id"] == "GrandParent.shared_method-mock"
-    assert calls[1][1]["_id"] == "Parent.shared_method-mock"
-    assert calls[2][1]["_id"] == "Child.shared_method-mock"
-    assert calls[3][1]["_id"] == "GrandChild.shared_method-mock"
+    assert calls[0][1]["id_"] == "GrandParent.shared_method-mock"
+    assert calls[1][1]["id_"] == "Parent.shared_method-mock"
+    assert calls[2][1]["id_"] == "Child.shared_method-mock"
+    assert calls[3][1]["id_"] == "GrandChild.shared_method-mock"
 
-    assert calls[4][1]["_id"] == "Child.child_method-mock"
-    assert calls[5][1]["_id"] == "GrandChild.child_method-mock"
+    assert calls[4][1]["id_"] == "Child.child_method-mock"
+    assert calls[5][1]["id_"] == "GrandChild.child_method-mock"
 
 
 @patch.object(Dispatcher, "span_end")
@@ -719,8 +719,8 @@ def test_span_naming_with_method_override(mock_uuid, mock_span_start, mock_span_
 
     calls = mock_span_start.call_args_list
 
-    assert calls[0][1]["_id"] == "Base.method-mock"
-    assert calls[1][1]["_id"] == "Derived.method-mock"
+    assert calls[0][1]["id_"] == "Base.method-mock"
+    assert calls[1][1]["id_"] == "Derived.method-mock"
 
 
 @patch.object(Dispatcher, "span_end")
@@ -750,5 +750,5 @@ def test_span_naming_with_nested_classes(mock_uuid, mock_span_start, mock_span_e
 
     calls = mock_span_start.call_args_list
 
-    assert calls[0][1]["_id"] == "Outer.outer_method-mock"
-    assert calls[1][1]["_id"] == "Inner.inner_method-mock"
+    assert calls[0][1]["id_"] == "Outer.outer_method-mock"
+    assert calls[1][1]["id_"] == "Inner.inner_method-mock"

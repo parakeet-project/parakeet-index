@@ -115,11 +115,11 @@ def test_print_trace_trees_with_events():
     assert len(handler.events) == 2
     assert len(handler.completed_spans) == 2
 
-    parent_span = next(s for s in handler.completed_spans if "parent_func" in s._id)
-    child_span = next(s for s in handler.completed_spans if "child_func" in s._id)
+    parent_span = next(s for s in handler.completed_spans if "parent_func" in s.id_)
+    child_span = next(s for s in handler.completed_spans if "child_func" in s.id_)
 
-    parent_events = [e for e in handler.events if e.span_id == parent_span._id]
-    child_events = [e for e in handler.events if e.span_id == child_span._id]
+    parent_events = [e for e in handler.events if e.span_id == parent_span.id_]
+    child_events = [e for e in handler.events if e.span_id == child_span.id_]
 
     assert len(parent_events) == 1
     assert len(child_events) == 1
@@ -240,7 +240,7 @@ def test_span_handler_parent_child_relationship():
     parent_span = root_spans[0]
     child_span = child_spans[0]
 
-    assert child_span.parent_id == parent_span._id
+    assert child_span.parent_id == parent_span.id_
 
 
 def test_print_event_trees():

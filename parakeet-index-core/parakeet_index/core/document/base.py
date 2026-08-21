@@ -13,7 +13,7 @@ class BaseDocument(BaseComponent, ABC):
 
     model_config = {"arbitrary_types_allowed": True, "validate_assignment": True}
 
-    _id: str = Field(
+    id_: str = Field(
         default_factory=lambda: str(uuid.uuid4()),
         description="Unique Id of the document.",
     )
@@ -25,7 +25,7 @@ class BaseDocument(BaseComponent, ABC):
         default=None,
         description="Embedding of the document.",
     )
-    parent_doc_id: str | None = Field(
+    ref_doc_id: str | None = Field(
         default=None,
         description="The Id of the parent document.",
     )
@@ -93,9 +93,9 @@ class DocumentWithScore(BaseComponent):
 
     # #### pass through properties to BaseDocument ####
     @property
-    def _id(self) -> str:
+    def id_(self) -> str:
         """Get document Id."""
-        return self.document._id
+        return self.document.id_
 
     @property
     def metadata(self) -> dict:
@@ -103,9 +103,9 @@ class DocumentWithScore(BaseComponent):
         return self.document.metadata
 
     @property
-    def parent_doc_id(self) -> str | None:
+    def ref_doc_id(self) -> str | None:
         """Get parent document Id."""
-        return self.document.parent_doc_id if isinstance(self.document, Document) else None
+        return self.document.ref_doc_id if isinstance(self.document, Document) else None
 
     def get_content(self) -> str:
         """Get document content."""

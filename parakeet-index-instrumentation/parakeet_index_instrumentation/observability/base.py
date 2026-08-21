@@ -45,7 +45,7 @@ class BaseObservability(BaseModel):
 
     def on_span_start(
         self,
-        _id: str,
+        id_: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         parent_id: str | None = None,
@@ -56,7 +56,7 @@ class BaseObservability(BaseModel):
 
     def on_span_end(
         self,
-        _id: str,
+        id_: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         result: Any | None = None,
@@ -66,7 +66,7 @@ class BaseObservability(BaseModel):
 
     def on_span_exception(
         self,
-        _id: str,
+        id_: str,
         bound_args: inspect.BoundArguments,
         instance: Any | None = None,
         err: BaseException | None = None,

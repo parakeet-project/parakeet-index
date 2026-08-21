@@ -1,6 +1,7 @@
 from abc import abstractmethod
 
 from parakeet_index.core.components import BaseComponent
+from parakeet_index.core.document import Document
 
 
 class BaseDocStore(BaseComponent):
@@ -17,56 +18,64 @@ class BaseDocStore(BaseComponent):
         return "BaseDocStore"
 
     @abstractmethod
-    def upsert(self, doc_id: str, doc_hash: str, text: str) -> None:
+    def upsert_documents(self, documents: list[Document]) -> None:
         """
-        Insert or update a document record.
-
-        The DocStore holds only root (parent) documents — never chunks.
-        Chunks are stored in the vector store with a ``parent_doc_id`` field
-        pointing back to the root document.
+        Insert or update document records.
 
         Args:
-            doc_id: Unique Id of the document.
-            doc_hash: SHA256 hash of the document text content.
-            text: Full text content (enables incremental re-chunking in the future).
+            documents: List of root documents to insert or update, keyed by
+                their ``id_``. Existing records with a matching Id are
+                overwritten.
         """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement the upsert_documents() method"
+        )
 
     @abstractmethod
-    def get_all(self) -> list[dict]:
+    def list_documents(self) -> list[Document]:
         """
-        Return all records without text content (lightweight for dedup/delete).
+        Return all documents currently stored, including text.
 
         Returns:
-            List of dicts with keys: doc_id, doc_hash.
+            List of documents.
         """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement the list_documents() method"
+        )
 
     @abstractmethod
-    def delete(self, doc_ids: list[str]) -> None:
+    def delete_documents(self, ids: list[str]) -> None:
         """
         Delete records by document Id.
 
         Args:
-            doc_ids: List of document Ids to delete.
+            ids: List of document Ids to delete.
         """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement the delete_documents() method"
+        )
 
     @abstractmethod
-    def exists_hashes(self, hashes: list[str]) -> set[str]:
+    def get_document_hash(self, doc_id: str) -> str | None:
         """
-        Return the subset of the given hashes that already exist in the store.
+        Get the stored hash for a single document, if it exists.
 
-        Used for deduplication: only hashes returned by this method indicate
-        documents already indexed. The query is performed against an index on
-        doc_hash for efficiency.
+        Used for incremental change detection: compare the returned hash
+        against a newly computed one to decide whether a document needs
+        re-chunking, without fetching its full text.
 
         Args:
-            hashes: List of SHA256 hashes to check.
+            doc_id: Id of the document to look up.
 
         Returns:
-            Set of hashes from the input that are already present in the store.
+            The stored SHA256 hash, or None if the document is not indexed.
         """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement the get_document_hash() method"
+        )
 
     @abstractmethod
-    def get_by_doc_id(self, doc_id: str) -> dict | None:
+    def get_document(self, doc_id: str) -> Document | None:
         """
         Return a single document record by Id, including text.
 
@@ -77,5 +86,8 @@ class BaseDocStore(BaseComponent):
             doc_id: Id of the document to retrieve.
 
         Returns:
-            Dict with keys doc_id, doc_hash, text, or None if not found.
+            The document, or None if not found.
         """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement the get_document() method"
+        )

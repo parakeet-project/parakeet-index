@@ -81,10 +81,10 @@ class ChromaVectorStore(BaseVectorStore):
 
             embeddings.append(
                 doc.embedding
-                if doc.embedding
-                else self.embed_model.embed_text(doc.get_content()),
+                if doc.embedding is not None
+                else self.embed_model.get_text_embeddings(doc.get_content())[0],
             )
-            ids.append(doc._id if doc._id else str(uuid.uuid4()))
+            ids.append(doc.id_ if doc.id_ else str(uuid.uuid4()))
             chroma_documents.append(doc.get_content())
 
         self._collection.add(
@@ -98,7 +98,7 @@ class ChromaVectorStore(BaseVectorStore):
 
     def _query_documents(self, query: str, top_k: int = 4) -> list[DocumentWithScore]:
         """Performs a similarity search for the top-k most similar documents."""
-        query_embedding = self.embed_model.embed_text(query)
+        query_embedding = self.embed_model.get_text_embeddings(query)
 
         results = self._collection.query(
             query_embeddings=query_embedding,
@@ -107,7 +107,7 @@ class ChromaVectorStore(BaseVectorStore):
 
         return [
             DocumentWithScore(
-                document=Document(_id=result[0], text=result[1], metadata=result[2]),
+                document=Document(id_=result[0], text=result[1], metadata=result[2]),
                 score=result[3],
             )
             for result in zip(
@@ -134,7 +134,7 @@ class ChromaVectorStore(BaseVectorStore):
         default_fields = ["documents", "metadatas", "embeddings"]
         include = include_fields if include_fields else default_fields
         field_map = {
-            "ids": "_id",
+            "ids": "id_",
             "documents": "text",
             "metadatas": "metadata",
             "embeddings": "embedding",

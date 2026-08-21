@@ -51,6 +51,7 @@ class PdfLoader(BaseFileLoader):
 
         return [
             Document(
+                id_=self._stable_id(input_file, str(page_number)),
                 text=page.extract_text().strip(),
                 metadata={"source": input_file, "page": page_number},
             )

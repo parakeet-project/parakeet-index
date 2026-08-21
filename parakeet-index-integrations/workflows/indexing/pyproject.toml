@@ -11,7 +11,7 @@ license = { text = "Apache-2.0" }
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 dependencies = [
-    "parakeet-index-core>=0.1.1,<0.2.0",
+    "parakeet-index-core>=0.1.0,<0.2.0",
 ]
 
 [tool.hatch.build.targets.sdist]
@@ -25,4 +25,7 @@ dev = [
     "pytest>=9.1.1,<10.0.0",
     "pytest-asyncio>=1.4.0,<2.0.0",
     "ruff>=0.15.20,<0.16.0",
+    "parakeet-index-docstore-sqlite>=0.1.0,<0.2.0",
+    "parakeet-index-loaders-file>=0.1.0,<0.2.0",
+    "parakeet-index-vector-stores-chroma>=0.1.0,<0.2.0",
 ]

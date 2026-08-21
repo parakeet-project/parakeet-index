@@ -95,9 +95,9 @@ class ElasticsearchVectorStore(BaseVectorStore):
         else:
             # Get embedding dims dynamically
             dims_length = len(
-                self.embed_model.embed_text(
+                self.embed_model.get_text_embeddings(
                     "parakeet-index-vector-stores-elasticsearch"
-                )
+                )[0]
             )
 
             index_mappings = {
@@ -149,7 +149,7 @@ class ElasticsearchVectorStore(BaseVectorStore):
 
         vector_store_data = []
         for doc in documents:
-            id = doc._id if doc._id else str(uuid.uuid4())
+            id = doc.id_ if doc.id_ else str(uuid.uuid4())
             metadata_mapping = self._dynamic_metadata_mapping(doc.metadata)
 
             vector_store_data.append(
@@ -158,8 +158,8 @@ class ElasticsearchVectorStore(BaseVectorStore):
                     "_id": id,
                     self.text_field: doc.get_content(),
                     self.vector_field: doc.embedding
-                    if doc.embedding
-                    else self.embed_model.embed_text(doc.get_content()),
+                    if doc.embedding is not None
+                    else self.embed_model.get_text_embeddings(doc.get_content())[0],
                     "metadata": doc.metadata,
                     **metadata_mapping,
                 },
@@ -173,11 +173,11 @@ class ElasticsearchVectorStore(BaseVectorStore):
         )
         print(f"Added {len(vector_store_data)} documents to `{self.index_name}`")
 
-        return [doc._id for doc in documents]
+        return [doc.id_ for doc in documents]
 
     def _query_documents(self, query: str, top_k: int = 4) -> list[DocumentWithScore]:
         """Performs a similarity search for the top-k most similar documents."""
-        query_embedding = self.embed_model.embed_text(query)
+        query_embedding = self.embed_model.get_text_embeddings(query)[0]
         #  TO-DO: Add elasticsearch `filter` option
         es_query = {
             "knn": {
@@ -209,7 +209,7 @@ class ElasticsearchVectorStore(BaseVectorStore):
         return [
             DocumentWithScore(
                 document=Document(
-                    _id=hit["_id"],
+                    id_=hit["_id"],
                     text=hit["_source"]["text"],
                     metadata=hit["_source"]["metadata"],
                 ),
@@ -257,7 +257,7 @@ class ElasticsearchVectorStore(BaseVectorStore):
 
         documents = [
             Document(
-                _id=hit["_id"],
+                id_=hit["_id"],
                 metadata=hit["_source"].get("metadata", {}),
                 embedding=hit["_source"].get(self.vector_field),
                 text=hit["_source"].get(self.text_field, ""),
@@ -274,7 +274,7 @@ class ElasticsearchVectorStore(BaseVectorStore):
             documents.extend(
                 [
                     Document(
-                        _id=hit["_id"],
+                        id_=hit["_id"],
                         metadata=hit["_source"].get("metadata", {}),
                         embedding=hit["_source"].get(self.vector_field),
                         text=hit["_source"].get(self.text_field, ""),

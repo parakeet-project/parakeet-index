@@ -117,7 +117,7 @@ class WatsonDiscoveryLoader(BaseLoader):
             documents.extend(
                 [
                     Document(
-                        _id=doc["document_id"],
+                        id_=doc["document_id"],
                         text="\n".join(doc["text"]),
                         metadata={
                             "collection_id": doc["result_metadata"]["collection_id"],

@@ -3,6 +3,7 @@ from typing import Any
 
 from parakeet_index.core.bridge.pydantic import Field, PrivateAttr
 from parakeet_index.core.docstore import BaseDocStore
+from parakeet_index.core.document import Document
 
 
 class SQLiteDocStore(BaseDocStore):
@@ -58,19 +59,27 @@ class SQLiteDocStore(BaseDocStore):
     def class_name(cls) -> str:
         return "SQLiteDocStore"
 
-    def upsert(self, doc_id: str, doc_hash: str, text: str) -> None:
-        """Insert or update a document record."""
+    def upsert_documents(self, documents: list[Document]) -> None:
+        """Insert or update document records."""
+        if not documents:
+            return
+
         from sqlalchemy.dialects.sqlite import insert
 
         now = datetime.now(timezone.utc).isoformat()
 
-        stmt = insert(self._table).values(
-            doc_id=doc_id,
-            doc_hash=doc_hash,
-            text=text,
-            created_at=now,
-            updated_at=now,
-        )
+        values = [
+            {
+                "doc_id": doc.id_,
+                "doc_hash": doc.hash,
+                "text": doc.get_content(),
+                "created_at": now,
+                "updated_at": now,
+            }
+            for doc in documents
+        ]
+
+        stmt = insert(self._table)
         stmt = stmt.on_conflict_do_update(
             index_elements=["doc_id"],
             set_={
@@ -81,57 +90,51 @@ class SQLiteDocStore(BaseDocStore):
         )
 
         with self._engine.begin() as conn:
-            conn.execute(stmt)
+            conn.execute(stmt, values)
 
-    def get_all(self) -> list[dict]:
-        """Return all records without text content (lightweight for dedup/delete)."""
+    def list_documents(self) -> list[Document]:
+        """Return all documents currently stored, including text."""
         from sqlalchemy import select
 
         stmt = select(
             self._table.c.doc_id,
-            self._table.c.doc_hash,
+            self._table.c.text,
         )
 
         with self._engine.connect() as conn:
             rows = conn.execute(stmt).fetchall()
 
-        return [{"doc_id": row[0], "doc_hash": row[1]} for row in rows]
+        return [Document(id_=row[0], text=row[1]) for row in rows]
 
-    def delete(self, doc_ids: list[str]) -> None:
+    def delete_documents(self, ids: list[str]) -> None:
         """Delete records by document ID."""
-        if not doc_ids:
+        if not ids:
             return
 
         from sqlalchemy import delete
 
-        stmt = delete(self._table).where(self._table.c.doc_id.in_(doc_ids))
+        stmt = delete(self._table).where(self._table.c.doc_id.in_(ids))
 
         with self._engine.begin() as conn:
             conn.execute(stmt)
 
-    def exists_hashes(self, hashes: list[str]) -> set[str]:
-        """Return the subset of the given hashes that already exist in the store."""
-        if not hashes:
-            return set()
-
+    def get_document_hash(self, doc_id: str) -> str | None:
+        """Get the stored hash for a single document, if it exists."""
         from sqlalchemy import select
 
-        stmt = select(self._table.c.doc_hash).where(
-            self._table.c.doc_hash.in_(hashes)
-        )
+        stmt = select(self._table.c.doc_hash).where(self._table.c.doc_id == doc_id)
 
         with self._engine.connect() as conn:
-            rows = conn.execute(stmt).fetchall()
+            row = conn.execute(stmt).fetchone()
 
-        return {row[0] for row in rows}
+        return row[0] if row is not None else None
 
-    def get_by_doc_id(self, doc_id: str) -> dict | None:
+    def get_document(self, doc_id: str) -> Document | None:
         """Return a single document record by Id, including text."""
         from sqlalchemy import select
 
         stmt = select(
             self._table.c.doc_id,
-            self._table.c.doc_hash,
             self._table.c.text,
         ).where(self._table.c.doc_id == doc_id)
 
@@ -141,4 +144,4 @@ class SQLiteDocStore(BaseDocStore):
         if row is None:
             return None
 
-        return {"doc_id": row[0], "doc_hash": row[1], "text": row[2]}
+        return Document(id_=row[0], text=row[1])

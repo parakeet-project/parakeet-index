@@ -47,4 +47,6 @@ class DocxLoader(BaseFileLoader):
         text = docx2txt.process(input_file)
         metadata = {"source": input_file}
 
-        return [Document(text=text, metadata=metadata)]
+        return [
+            Document(id_=self._stable_id(input_file), text=text, metadata=metadata)
+        ]

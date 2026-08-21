@@ -11,7 +11,7 @@ class BaseEvent(BaseModel):
     model_config = {"arbitrary_types_allowed": True}
 
     timestamp: datetime = Field(default_factory=lambda: datetime.now())
-    _id: str = Field(default_factory=lambda: str(uuid4()))
+    id_: str = Field(default_factory=lambda: str(uuid4()))
     span_id: str | None = Field(default_factory=active_span_id.get)
     metadata: dict[str, Any] = Field(default={})
 

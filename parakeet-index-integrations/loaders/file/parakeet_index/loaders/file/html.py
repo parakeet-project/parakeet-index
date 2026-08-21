@@ -53,7 +53,7 @@ class HtmlLoader(BaseFileLoader):
         tags = soup.find_all(self.tag)
         documents = []
 
-        for tag in tags:
+        for index, tag in enumerate(tags):
             tag_text = self._extract_text_from_tag(tag)
 
             metadata = {
@@ -62,6 +62,7 @@ class HtmlLoader(BaseFileLoader):
             }
 
             doc = Document(
+                id_=self._stable_id(input_file, str(index)),
                 text=tag_text,
                 metadata=metadata,
             )

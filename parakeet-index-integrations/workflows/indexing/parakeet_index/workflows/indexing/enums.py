@@ -1,9 +1,15 @@
 class DocStrategy:
     """
-    Document de-duplication strategies work by comparing the hashes in the vector store.
-    They require a vector store to be set.
+    Document deduplication strategies, based on comparing document hashes
+    against the configured ``doc_store``. Require a ``doc_store`` to be set.
+    Otherwise deduplication is skipped regardless of the strategy chosen.
     """
 
     DEDUPLICATE_OFF = "deduplicate_off"
-    DUPLICATE_ONLY = "duplicate_only"
-    DUPLICATE_AND_DELETE = "duplicate_and_delete"
+    """Always index every document, never checking the doc_store."""
+
+    INCREMENTAL = "incremental"
+    """Index only new or changed documents; preserve everything already indexed."""
+
+    FULL = "full"
+    """Index only new or changed documents, and delete indexed documents that are no longer in the current batch."""

@@ -3,7 +3,7 @@ from parakeet_index.core.components import TransformerComponent
 from parakeet_index.core.docstore import BaseDocStore
 from parakeet_index.core.document import Document
 from parakeet_index.core.loaders import BaseLoader
-from parakeet_index.core.toolkit import validate_enum
+from parakeet_index.core.utils.validation import validate_enum
 from parakeet_index.core.vector_stores import BaseVectorStore
 from parakeet_index.core.workflows import Context, StartEvent, StopEvent, Workflow, step
 from parakeet_index.workflows.indexing.enums import DocStrategy
@@ -48,7 +48,7 @@ class DocumentIngestionWorkflow(Workflow):
         transformers (list[TransformerComponent]): Transformer components applied to input documents.
         loaders (list[BaseLoader]): Loaders for fetching documents.
         vector_store (BaseVectorStore, optional): Vector store for storing processed documents.
-        doc_strategy (str, optional): Strategy for handling duplicate documents. Defaults to ``duplicate_only``.
+        doc_strategy (str, optional): Strategy for handling duplicate documents. Defaults to ``incremental``.
         doc_store (BaseDocStore, optional): Document store for deduplication index. If not provided,
             deduplication is skipped regardless of ``doc_strategy``.
 
@@ -76,19 +76,19 @@ class DocumentIngestionWorkflow(Workflow):
     def __init__(
         self,
         transformers: list[TransformerComponent],
-        doc_strategy: str = DocStrategy.DUPLICATE_ONLY,
+        doc_strategy: str = DocStrategy.INCREMENTAL,
+        doc_store: BaseDocStore | None = None,
         loaders: list[BaseLoader] | None = None,
         vector_store: BaseVectorStore | None = None,
-        doc_store: BaseDocStore | None = None,
     ) -> None:
         validate_enum(
             el=doc_strategy, el_name="doc_strategy", expected_enum=DocStrategy
         )
 
-        self.doc_strategy = doc_strategy
         self.transformers = transformers
         self.loaders = loaders or []
         self.vector_store = vector_store
+        self.doc_strategy = doc_strategy
         self.doc_store = doc_store
 
     @step(when=StartEvent)
@@ -134,12 +134,8 @@ class DocumentIngestionWorkflow(Workflow):
             documents = self._handle_duplicates(documents)
 
             # Persist accepted parent documents to the doc_store index
-            for doc in documents:
-                self.doc_store.upsert(
-                    doc_id=doc._id,
-                    doc_hash=doc.hash,
-                    text=doc.get_content(),
-                )
+            if documents:
+                self.doc_store.upsert_documents(documents)
 
             return DocumentsDeduplicatedEvent(documents=documents)
         else:
@@ -182,35 +178,33 @@ class DocumentIngestionWorkflow(Workflow):
         if self.doc_store is None:
             return documents
 
-        incoming_hashes = [doc.hash for doc in documents]
-
-        existing_hashes = self.doc_store.exists_hashes(incoming_hashes)
-
-        unique_hashes_in_batch: list[str] = []
+        seen_hashes_in_batch: set[str] = set()
         dedup_documents: list[Document] = []
 
         for doc in documents:
-            if (
-                doc.hash not in existing_hashes
-                and doc.hash not in unique_hashes_in_batch
-                and doc.get_content() != ""
-            ):
-                dedup_documents.append(doc)
-                unique_hashes_in_batch.append(doc.hash)
+            if doc.get_content() == "" or doc.hash in seen_hashes_in_batch:
+                continue
 
-        # Handle DUPLICATE_AND_DELETE strategy — remove indexed docs not in current batch
-        if self.doc_strategy == DocStrategy.DUPLICATE_AND_DELETE:
-            all_records = self.doc_store.get_all()
+            stored_hash = self.doc_store.get_document_hash(doc.id_)
+            if stored_hash == doc.hash:
+                continue
+
+            dedup_documents.append(doc)
+            seen_hashes_in_batch.add(doc.hash)
+
+        # Handle FULL strategy — remove indexed docs not in current batch
+        if self.doc_strategy == DocStrategy.FULL:
+            incoming_ids = {doc.id_ for doc in documents}
             ids_to_remove = [
-                r["doc_id"]
-                for r in all_records
-                if r["doc_hash"] not in incoming_hashes
+                indexed_doc.id_
+                for indexed_doc in self.doc_store.list_documents()
+                if indexed_doc.id_ not in incoming_ids
             ]
 
             if ids_to_remove:
                 if self.vector_store is not None:
                     self.vector_store.delete_documents(ids_to_remove)
-                self.doc_store.delete(ids_to_remove)
+                self.doc_store.delete_documents(ids_to_remove)
 
         return dedup_documents
 
