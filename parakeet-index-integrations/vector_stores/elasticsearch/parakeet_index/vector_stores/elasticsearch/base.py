@@ -95,9 +95,9 @@ class ElasticsearchVectorStore(BaseVectorStore):
         else:
             # Get embedding dims dynamically
             dims_length = len(
-                self.embed_model.embed_text(
+                self.embed_model.get_text_embeddings(
                     "parakeet-index-vector-stores-elasticsearch"
-                )
+                )[0]
             )
 
             index_mappings = {
@@ -149,19 +149,19 @@ class ElasticsearchVectorStore(BaseVectorStore):
 
         vector_store_data = []
         for doc in documents:
-            _id = doc.id_ if doc.id_ else str(uuid.uuid4())
-            _metadata = {**doc.metadata, "hash": doc.hash}
-            _metadata_mapping = self._dynamic_metadata_mapping(_metadata)
+            id = doc.id_ if doc.id_ else str(uuid.uuid4())
+            metadata_mapping = self._dynamic_metadata_mapping(doc.metadata)
+
             vector_store_data.append(
                 {
                     "_index": self.index_name,
-                    "_id": _id,
+                    "_id": id,
                     self.text_field: doc.get_content(),
                     self.vector_field: doc.embedding
-                    if doc.embedding
-                    else self.embed_model.embed_text(doc.get_content()),
-                    "metadata": _metadata,
-                    **_metadata_mapping,
+                    if doc.embedding is not None
+                    else self.embed_model.get_text_embeddings(doc.get_content())[0],
+                    "metadata": doc.metadata,
+                    **metadata_mapping,
                 },
             )
 
@@ -177,7 +177,7 @@ class ElasticsearchVectorStore(BaseVectorStore):
 
     def _query_documents(self, query: str, top_k: int = 4) -> list[DocumentWithScore]:
         """Performs a similarity search for the top-k most similar documents."""
-        query_embedding = self.embed_model.embed_text(query)
+        query_embedding = self.embed_model.get_text_embeddings(query)[0]
         #  TO-DO: Add elasticsearch `filter` option
         es_query = {
             "knn": {

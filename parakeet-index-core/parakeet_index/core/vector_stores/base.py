@@ -100,18 +100,3 @@ class BaseVectorStore(BaseComponent, DispatcherSpanMixin):
         raise NotImplementedError(
             f"{self.__class__.__name__} must implement the get_all_documents() method"
         )
-
-    def get_all_document_hashes(self) -> tuple[list[str], list[str], list[str]]:
-        """
-        Get all document IDs and hashes from vector store.
-
-        This is a utility method that retrieves document identifiers and their
-        content hashes for deduplication and synchronization purposes.
-        """
-        hits = self.get_all_documents()
-
-        ids = [doc.id_ for doc in hits]
-        hashes = [doc.metadata.get("hash", "") for doc in hits]
-        ref_hashes = [doc.metadata.get("ref_doc_hash", "") for doc in hits]
-
-        return ids, hashes, ref_hashes

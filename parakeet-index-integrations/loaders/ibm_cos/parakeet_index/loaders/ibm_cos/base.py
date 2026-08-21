@@ -1,4 +1,5 @@
 import os
+import shutil
 import tempfile
 from typing import Any
 
@@ -62,7 +63,13 @@ class IBMCosLoader(BaseLoader):
 
         bucket = ibm_s3.Bucket(self.bucket)
 
-        with tempfile.TemporaryDirectory() as temp_dir:
+        # Deterministic (not random) path per bucket.
+        temp_dir = os.path.join(
+            tempfile.gettempdir(), "parakeet-index-ibm-cos", self.bucket
+        )
+        os.makedirs(temp_dir, exist_ok=True)
+
+        try:
             for obj in bucket.objects.filter(Prefix=""):
                 file_path = f"{temp_dir}/{obj.key}"
                 os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -71,3 +78,5 @@ class IBMCosLoader(BaseLoader):
             # s3_source = re.sub(r"^(https?)://", "", self.s3_endpoint_url)
 
             return DirectoryLoader(input_dir=temp_dir).load_data()
+        finally:
+            shutil.rmtree(temp_dir, ignore_errors=True)

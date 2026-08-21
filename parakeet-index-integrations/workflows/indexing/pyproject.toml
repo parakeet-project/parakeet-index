@@ -3,28 +3,29 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "parakeet-index-embeddings-hf"
+name = "parakeet-index-workflows-indexing"
 version = "0.1.0"
-description = "parakeet-index embeddings huggingface integration"
+description = "parakeet-index workflows indexing integration"
 authors = [{ name = "Leonardo Furnielis", email = "leonardofurnielis@outlook.com" }]
 license = { text = "Apache-2.0" }
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 dependencies = [
-    "sentence-transformers>=5.2.3,<6.0.0",
-    "hf-xet>=1.4.2,<1.5.0",
     "parakeet-index-core>=0.1.0,<0.2.0",
 ]
 
 [tool.hatch.build.targets.sdist]
-include = ["parakeet_index"]
+include = ["parakeet_index/"]
 
 [tool.hatch.build.targets.wheel]
-include = ["parakeet_index"]
+include = ["parakeet_index/"]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=9.1.1,<10.0.0",
     "pytest-asyncio>=1.4.0,<2.0.0",
     "ruff>=0.15.20,<0.16.0",
+    "parakeet-index-docstore-sqlite>=0.1.0,<0.2.0",
+    "parakeet-index-loaders-file>=0.1.0,<0.2.0",
+    "parakeet-index-vector-stores-chroma>=0.1.0,<0.2.0",
 ]

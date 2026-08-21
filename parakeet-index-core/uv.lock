@@ -268,7 +268,7 @@ wheels = [
 
 [[package]]
 name = "parakeet-index-core"
-version = "0.1.0.post1"
+version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "deprecated" },
@@ -277,6 +277,7 @@ dependencies = [
     { name = "numpy" },
     { name = "parakeet-index-instrumentation" },
     { name = "parakeet-index-utils" },
+    { name = "parakeet-workflows" },
     { name = "pydantic" },
     { name = "tiktoken" },
 ]
@@ -297,6 +298,7 @@ requires-dist = [
     { name = "numpy", specifier = ">=1.26.4,<2.0.0" },
     { name = "parakeet-index-instrumentation", specifier = ">=0.1.0,<0.2.0" },
     { name = "parakeet-index-utils", specifier = ">=0.1.0,<0.2.0" },
+    { name = "parakeet-workflows", specifier = ">=0.1.0,<0.2.0" },
     { name = "pydantic", specifier = ">=2.13.4,<3.0.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.1.1,<10.0.0" },
     { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=1.4.0,<2.0.0" },
@@ -330,6 +332,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a2/b5/d2a454e277004ff19c0275e1e59c8b69b41556e7a42efdd0d5f59fe467ef/parakeet_index_utils-0.1.0.tar.gz", hash = "sha256:e0f269a1be490b7fab7513409dcd77c7f407e25725e3934623d4cbdf52c0a1c0", size = 8204, upload-time = "2026-08-16T15:08:46.182Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/3f/be/333dfb8bdb65ceb19c735cf7e9fc0f4127c3a89d7cb41c2d55251ca4907b/parakeet_index_utils-0.1.0-py3-none-any.whl", hash = "sha256:813031fdcf4fe2b5b8156219735927104433756dd14d1ded2840d852d6a0cd6a", size = 13795, upload-time = "2026-08-16T15:08:45.1Z" },
+]
+
+[[package]]
+name = "parakeet-workflows"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "parakeet-index-instrumentation" },
+    { name = "parakeet-index-utils" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5b/fb/169add3c06bbc3eae3c118cade971a14cc386acfcdbb99cb4e14325899b1/parakeet_workflows-0.1.0.tar.gz", hash = "sha256:cf85838925d4a7f23bcee0efe201a0098e291f8e80a72045ca176b0e8a77efab", size = 30421, upload-time = "2026-08-18T18:10:49.396Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/93/2c/0d1db088610f1670426d107623871c2c7c76717f53efdfd4b4be0debb60d/parakeet_workflows-0.1.0-py3-none-any.whl", hash = "sha256:dcf1e0fceafa81a777189ee4fbbcb9348b215afaf9176a2fb817f74593868576", size = 40847, upload-time = "2026-08-18T18:10:50.918Z" },
 ]
 
 [[package]]

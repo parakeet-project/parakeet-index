@@ -1,1 +1,1 @@
-::: parakeet_index.core.evaluation.context_similarity
+::: parakeet_index.core.evals.context_similarity

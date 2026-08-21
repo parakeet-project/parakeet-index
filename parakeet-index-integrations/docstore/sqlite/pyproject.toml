@@ -3,24 +3,23 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "parakeet-index-embeddings-hf"
+name = "parakeet-index-docstore-sqlite"
 version = "0.1.0"
-description = "parakeet-index embeddings huggingface integration"
+description = "parakeet-index docstore sqlite integration"
 authors = [{ name = "Leonardo Furnielis", email = "leonardofurnielis@outlook.com" }]
 license = { text = "Apache-2.0" }
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 dependencies = [
-    "sentence-transformers>=5.2.3,<6.0.0",
-    "hf-xet>=1.4.2,<1.5.0",
+    "sqlalchemy>=2.0.51,<2.1.0",
     "parakeet-index-core>=0.1.0,<0.2.0",
 ]
 
 [tool.hatch.build.targets.sdist]
-include = ["parakeet_index"]
+include = ["parakeet_index/"]
 
 [tool.hatch.build.targets.wheel]
-include = ["parakeet_index"]
+include = ["parakeet_index/"]
 
 [project.optional-dependencies]
 dev = [

@@ -66,30 +66,27 @@ class BaseTextChunker(TransformerComponent, DispatcherSpanMixin):
                 config_dict=config_dict,
             )
         )
-        documents = []
+        chunked_documents = []
 
         for document in documents:
             texts = self._get_text_chunks(document.get_content())
             metadata = {**document.metadata}
 
             for text in texts:
-                if len(texts) > 1:
-                    metadata["ref_doc_id"] = document.id_
-                    metadata["ref_doc_hash"] = document.hash
-
-                documents.append(
+                chunked_documents.append(
                     Document(
                         text=text,
                         metadata=metadata,
+                        ref_doc_id=document.id_,
                     ),
                 )
 
         dispatcher.event(
             TextChunkerEndEvent(
-                chunks=documents,
+                chunks=chunked_documents,
             )
         )
-        return documents
+        return chunked_documents
 
     def __call__(self, documents: list[Document]) -> list[Document]:
         return self.get_document_chunks(documents)
