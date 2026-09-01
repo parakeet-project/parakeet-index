@@ -6,13 +6,13 @@ title: Document Ingestion
 === "pip"
 
     ```bash
-    $ pip install "parakeet-workflows[prebuilt]"
+    $ pip install "parakeet-index-workflows-indexing"
     ```
 
 === "uv"
 
     ```bash
-    $ uv add "parakeet-workflows[prebuilt]"
+    $ uv add "parakeet-index-workflows-indexing"
     ```
 
 A prebuilt workflow for document ingestion that handles the complete pipeline of loading, transforming, and storing documents in a vector store.
@@ -39,7 +39,8 @@ This workflow provides a streamlined approach to building document ingestion pip
 ## Example
 
 ```python
-from parakeet_workflows.prebuilt import DocumentIngestionWorkflow
+from parakeet_index.workflows.indexing import DocumentIngestionWorkflow
+
 from parakeet_index.core.loaders import DirectoryLoader
 from parakeet_index.core.text_chunkers import TokenTextChunker
 from parakeet_index.docstore.sqlite import SQLiteDocStore

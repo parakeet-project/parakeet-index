@@ -64,16 +64,16 @@ plugins:
 
 nav:
   - API Reference: index.md
-  - LLMs: llms/
   - Embeddings: embeddings/
-  - Loaders: loaders/
-  - Text Chunkers: text_chunkers/
-  - Vector Stores: vector_stores/
-  - Retrievers: retrievers/
-  - Prompts: prompts/
   - Evaluation: evaluation/
   - Guardrails: guardrails/
+  - LLMs: llms/
+  - Loaders: loaders/
   - Observability: observability/
+  - Prompts: prompts/
+  - Retrievers: retrievers/
+  - Text Chunkers: text_chunkers/
+  - Vector Stores: vector_stores/
   - Workflows:
     - Overview: workflows/overview.md
     - Run as a Server: workflows/run_server.md

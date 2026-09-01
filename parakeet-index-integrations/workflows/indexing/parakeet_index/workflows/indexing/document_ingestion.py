@@ -203,7 +203,7 @@ class DocumentIngestionWorkflow(Workflow):
 
             if ids_to_remove:
                 if self.vector_store is not None:
-                    self.vector_store.delete_documents(ids_to_remove)
+                    self.vector_store.delete_by_ref_doc(ids_to_remove)
                 self.doc_store.delete_documents(ids_to_remove)
 
         return dedup_documents

@@ -5,7 +5,7 @@ from typing import Any, Literal
 from parakeet_index.core.bridge.pydantic import Field, PrivateAttr
 from parakeet_index.core.document import Document, DocumentWithScore
 from parakeet_index.core.embeddings import BaseEmbedding
-from parakeet_index.core.vector_stores import BaseVectorStore
+from parakeet_index.core.vector_stores import BaseVectorStore, doc_to_metadata_dict
 
 logger = getLogger(__name__)
 
@@ -77,14 +77,19 @@ class ChromaVectorStore(BaseVectorStore):
         chroma_documents = []
 
         for doc in documents:
-            metadatas.append(doc.metadata)
+            doc_id = doc.id_ if doc.id_ else str(uuid.uuid4())
+            metadata = doc_to_metadata_dict(doc)
+
+            # Chroma rejects an empty metadata dict (but accepts None), which
+            # happens when a document has neither its own metadata nor a ref_doc_id.
+            metadatas.append(metadata if metadata else None)
 
             embeddings.append(
                 doc.embedding
                 if doc.embedding is not None
                 else self.embed_model.get_text_embeddings(doc.get_content())[0],
             )
-            ids.append(doc.id_ if doc.id_ else str(uuid.uuid4()))
+            ids.append(doc_id)
             chroma_documents.append(doc.get_content())
 
         self._collection.add(
@@ -126,6 +131,18 @@ class ChromaVectorStore(BaseVectorStore):
             ids (list[str], optional): List of `Document` IDs to delete. Defaults to `None`.
         """
         self._collection.delete(ids=ids)
+
+    def delete_by_ref_doc(self, ref_doc_ids: list[str]) -> None:
+        """
+        Delete all chunks whose ref_doc_id matches any of the given parent ids.
+
+        Args:
+            ref_doc_ids (list[str]): Parent document ids whose chunks should be removed.
+        """
+        if not ref_doc_ids:
+            return
+
+        self._collection.delete(where={"ref_doc_id": {"$in": ref_doc_ids}})
 
     def get_all_documents(
         self, include_fields: list[str] | None = None

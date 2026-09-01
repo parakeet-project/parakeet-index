@@ -5,7 +5,7 @@ from typing import Any, Literal
 from parakeet_index.core.bridge.pydantic import Field, PrivateAttr, SecretStr
 from parakeet_index.core.document import Document, DocumentWithScore
 from parakeet_index.core.embeddings import BaseEmbedding
-from parakeet_index.core.vector_stores import BaseVectorStore
+from parakeet_index.core.vector_stores import BaseVectorStore, doc_to_metadata_dict
 
 logger = getLogger(__name__)
 
@@ -150,7 +150,8 @@ class ElasticsearchVectorStore(BaseVectorStore):
         vector_store_data = []
         for doc in documents:
             id = doc.id_ if doc.id_ else str(uuid.uuid4())
-            metadata_mapping = self._dynamic_metadata_mapping(doc.metadata)
+            metadata = doc_to_metadata_dict(doc)
+            metadata_mapping = self._dynamic_metadata_mapping(metadata)
 
             vector_store_data.append(
                 {
@@ -160,7 +161,7 @@ class ElasticsearchVectorStore(BaseVectorStore):
                     self.vector_field: doc.embedding
                     if doc.embedding is not None
                     else self.embed_model.get_text_embeddings(doc.get_content())[0],
-                    "metadata": doc.metadata,
+                    "metadata": metadata,
                     **metadata_mapping,
                 },
             )
@@ -227,6 +228,22 @@ class ElasticsearchVectorStore(BaseVectorStore):
         """
         for id in ids:
             self._client.delete(index=self.index_name, id=id)
+
+    def delete_by_ref_doc(self, ref_doc_ids: list[str]) -> None:
+        """
+        Delete all chunks whose ref_doc_id matches any of the given parent ids.
+
+        Args:
+            ref_doc_ids (list[str]): Parent document ids whose chunks should be removed.
+        """
+        if not ref_doc_ids:
+            return
+
+        self._client.delete_by_query(
+            index=self.index_name,
+            query={"terms": {"metadata.ref_doc_id": ref_doc_ids}},
+            refresh=True,
+        )
 
     def get_all_documents(
         self, include_fields: list[str] | None = None

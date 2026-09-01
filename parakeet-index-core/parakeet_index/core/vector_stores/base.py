@@ -100,3 +100,18 @@ class BaseVectorStore(BaseComponent, DispatcherSpanMixin):
         raise NotImplementedError(
             f"{self.__class__.__name__} must implement the get_all_documents() method"
         )
+
+    @abstractmethod
+    def delete_by_ref_doc(self, ref_doc_ids: list[str]) -> None:
+        """
+        Delete all chunks whose ref_doc_id matches any of the given parent ids.
+
+        Complements delete_documents(), which deletes by literal vector store
+        id (e.g. chunk id) and is unaware of the ref_doc_id relationship.
+
+        Args:
+            ref_doc_ids: Parent document ids whose chunks should be removed.
+        """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement the delete_by_ref_doc() method"
+        )
