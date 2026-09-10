@@ -107,10 +107,10 @@ class BaseVectorStore(BaseComponent, DispatcherSpanMixin):
         Delete all chunks whose ref_doc_id matches any of the given parent ids.
 
         Complements delete_documents(), which deletes by literal vector store
-        id (e.g. chunk id) and is unaware of the ref_doc_id relationship.
+        id and is unaware of the ref_doc_id relationship.
 
         Args:
-            ref_doc_ids: Parent document ids whose chunks should be removed.
+            ref_doc_ids: Parent document ids whose should be removed.
         """
         raise NotImplementedError(
             f"{self.__class__.__name__} must implement the delete_by_ref_doc() method"

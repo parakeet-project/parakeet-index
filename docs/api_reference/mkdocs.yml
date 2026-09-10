@@ -20,7 +20,7 @@ markdown_extensions:
   - md_in_html
 
 extra:
-  version: "0.1.0"
+  version: "0.1.2"
 extra_css:
   - _static/css/style.css
 
@@ -65,7 +65,7 @@ plugins:
 nav:
   - API Reference: index.md
   - Embeddings: embeddings/
-  - Evaluation: evaluation/
+  - Evaluations: evals/
   - Guardrails: guardrails/
   - LLMs: llms/
   - Loaders: loaders/
@@ -79,7 +79,7 @@ nav:
     - Run as a Server: workflows/run_server.md
     - Benchmarks: workflows/benchmark_report.md
     - Prebuilt:
-      - Document Ingestion:  workflows/prebuilt/document_ingestion.md
+      - Document Indexing:  workflows/prebuilt/document_indexing.md
 
 theme:
   name: material

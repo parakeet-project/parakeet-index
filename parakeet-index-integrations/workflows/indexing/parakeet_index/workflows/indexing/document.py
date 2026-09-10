@@ -19,7 +19,7 @@ from parakeet_index.workflows.indexing.events import (
 
 
 class WorkflowState(BaseModel):
-    """State for document ingestion workflow."""
+    """State for document indexing workflow."""
 
     input_documents: list[Document] = Field(
         default_factory=list, description="Input documents"
@@ -30,15 +30,15 @@ class WorkflowState(BaseModel):
 
 
 # ============================================================================
-# Document Ingestion Workflow
+# Document Indexing Workflow
 # ============================================================================
 
 
-class DocumentIngestionWorkflow(Workflow):
+class DocumentIndexingWorkflow(Workflow):
     """
-    A document ingestion workflow for processing and storing documents.
+    E2E document indexing workflow for processing and storing documents.
 
-    This workflow orchestrates the document ingestion pipeline with support for:
+    This workflow orchestrates the document indexing pipeline with support for:
     - Multiple document loaders (e.g., Docx, PDF, S3)
     - Multiple transformation components (e.g., chunking, embedding)
     - Deduplication strategies (requires ``doc_store`` to be configured)
@@ -54,22 +54,22 @@ class DocumentIngestionWorkflow(Workflow):
 
     Example:
         ```python
-        from parakeet_workflows.prebuilt import DocumentIngestionWorkflow
+        from parakeet_index.workflows.indexing import DocumentIndexingWorkflow
 
         from parakeet_index.core.text_chunkers import TokenTextChunker
         from parakeet_index.docstore.sqlite import SQLiteDocStore
         from parakeet_index.embeddings.huggingface import HuggingFaceEmbedding
 
 
-        ingestion_workflow = DocumentIngestionWorkflow(
+        indexing_workflow = DocumentIndexingWorkflow(
             transformers=[
                 TokenTextChunker(),
                 HuggingFaceEmbedding(model_name="intfloat/multilingual-e5-small"),
             ],
-            doc_store=SQLiteDocStore(db_path="./my-index.db"),
+            doc_store=SQLiteDocStore(),
         )
 
-        result = await ingestion_workflow.run(documents=[doc1, doc2])
+        result = await indexing_workflow.run(documents=[doc1, doc2])
         ```
     """
 

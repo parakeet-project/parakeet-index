@@ -892,7 +892,7 @@ wheels = [
 
 [[package]]
 name = "parakeet-index"
-version = "0.1.0.post1"
+version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "parakeet-index-core" },
@@ -910,7 +910,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "parakeet-index-core", specifier = ">=0.1.0.post1,<0.2.0" },
+    { name = "parakeet-index-core", specifier = ">=0.1.1,<0.2.0" },
     { name = "parakeet-index-llms-litellm", specifier = ">=0.1.0,<0.2.0" },
     { name = "parakeet-index-loaders-file", specifier = ">=0.1.0,<0.2.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.1.1,<10.0.0" },
@@ -922,7 +922,7 @@ provides-extras = ["dev"]
 
 [[package]]
 name = "parakeet-index-core"
-version = "0.1.0.post1"
+version = "0.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "deprecated" },
@@ -934,9 +934,9 @@ dependencies = [
     { name = "pydantic" },
     { name = "tiktoken" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/66/72/9fa285c8c889d8c0e7a7ce37ae2964fc39ee0e7f8049b9a6ffe7a5b6810f/parakeet_index_core-0.1.0.post1.tar.gz", hash = "sha256:b841af5e3cb91d8e43a0567c2f839780616e8b1e33a3c5db069eeea242ef36e4", size = 18064, upload-time = "2026-08-16T15:11:29.295Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ce/92/b18e42d5662822f7a0a75449133fe3cbf91e01d5ad66d7ca46a820c9a298/parakeet_index_core-0.1.1.tar.gz", hash = "sha256:524cabe0f2a118cf04b479dbcefb4554a767ab7e0d42d97a0b01d8277378f6e1", size = 18312, upload-time = "2026-08-21T18:39:26.121Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4c/c6/fe92fa5fd5888182ecb3f7ba73c1bb5a4fb378c5aa95deed5a7eed9ead2b/parakeet_index_core-0.1.0.post1-py3-none-any.whl", hash = "sha256:dc1d127b148dc45c607a296ed935038592cf44b65dae4dd67ffdf8d54913e3a4", size = 36661, upload-time = "2026-08-16T15:11:28.294Z" },
+    { url = "https://files.pythonhosted.org/packages/73/a9/d877db975389b80e8e4773f9adfc310dcad5777c6f61752b60e644ee4cdc/parakeet_index_core-0.1.1-py3-none-any.whl", hash = "sha256:8436a06aafd4f2b4d1a4937ac00f164f91cb358e28c73dbf2a9dc8f3286cd26b", size = 36863, upload-time = "2026-08-21T18:39:24.975Z" },
 ]
 
 [[package]]

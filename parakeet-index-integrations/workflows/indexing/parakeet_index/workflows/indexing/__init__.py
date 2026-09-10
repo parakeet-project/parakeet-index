@@ -1,5 +1,5 @@
-from parakeet_index.workflows.indexing.document_ingestion import (
-    DocumentIngestionWorkflow,
+from parakeet_index.workflows.indexing.document import (
+    DocumentIndexingWorkflow,
 )
 
-__all__ = ["DocumentIngestionWorkflow"]
+__all__ = ["DocumentIndexingWorkflow"]

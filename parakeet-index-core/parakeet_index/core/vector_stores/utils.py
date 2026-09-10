@@ -9,11 +9,10 @@ def doc_to_metadata_dict(document: Document) -> dict[str, Any]:
 
     Merges the document's own metadata with reserved tracking fields (currently
     just ref_doc_id) needed to recover the parent/child relationship after
-    storage. Reserved keys are omitted when unset, since most vector store
-    backends (e.g. Chroma) reject None as a metadata value.
+    storage.
 
     Args:
-        document: The document (typically a chunk) being persisted.
+        document: The document being persisted.
 
     Returns:
         A flat metadata dict safe to hand to a vector store backend.
