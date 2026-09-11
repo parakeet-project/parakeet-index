@@ -4,12 +4,6 @@ from typing import Any
 from parakeet_index.core.bridge.pydantic import Field
 from parakeet_index.core.components import BaseComponent
 from parakeet_index.core.instrumentation import DispatcherSpanMixin, get_dispatcher
-from parakeet_index.core.instrumentation.events.llm import (
-    LLMChatEndEvent,
-    LLMChatStartEvent,
-    LLMCompletionEndEvent,
-    LLMCompletionStartEvent,
-)
 from parakeet_index.core.llms.schemas import (
     ChatMessage,
     ChatResponse,
@@ -60,6 +54,18 @@ class BaseLLM(BaseComponent, DispatcherSpanMixin):
             prompt (str): The input prompt to generate a completion for.
             **kwargs (Any): Additional keyword arguments to customize the LLM completion request.
         """
+        # Deferred: events.llm imports core.llms.schemas, which forces this
+        # package's __init__ (and this module) to load first. Importing it
+        # at module level here would deadlock that cycle. Long-term fix:
+        # move ChatMessage/ChatResponse/CompletionResponse (and enums.py,
+        # which schemas.py depends on) out of core.llms into a standalone
+        # core/schemas/llms.py with no back-dependency on this package, so
+        # events.llm no longer needs to trigger core.llms.__init__ at all.
+        from parakeet_index.core.instrumentation.events.llm import (
+            LLMCompletionEndEvent,
+            LLMCompletionStartEvent,
+        )
+
         config_dict = self.to_dict(exclude={"api_key"})
         dispatcher.event(
             LLMCompletionStartEvent(
@@ -88,6 +94,12 @@ class BaseLLM(BaseComponent, DispatcherSpanMixin):
             messages (list[ChatMessage]): A list of chat messages as input for the LLM.
             **kwargs (Any): Additional keyword arguments to customize the LLM completion request.
         """
+        # Deferred: see comment in completion() above.
+        from parakeet_index.core.instrumentation.events.llm import (
+            LLMChatEndEvent,
+            LLMChatStartEvent,
+        )
+
         config_dict = self.to_dict(exclude={"api_key"})
         dispatcher.event(
             LLMChatStartEvent(
