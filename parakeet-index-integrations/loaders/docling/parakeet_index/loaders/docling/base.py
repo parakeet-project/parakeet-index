@@ -60,6 +60,7 @@ class DoclingLoader(BaseFileLoader):
 
                 documents.append(
                     Document(
+                        id_=self._stable_id(input_file, f"table-{i}"),
                         text=table_text,
                         metadata={
                             "source": input_file,
@@ -72,6 +73,7 @@ class DoclingLoader(BaseFileLoader):
             docling_document.document.delete_items(node_items=tables_to_remove)
             documents.append(
                 Document(
+                    id_=self._stable_id(input_file),
                     text=docling_document.document.export_to_markdown(),
                     metadata={"source": input_file},
                 ),
@@ -80,6 +82,7 @@ class DoclingLoader(BaseFileLoader):
         else:
             documents.append(
                 Document(
+                    id_=self._stable_id(input_file),
                     text=docling_document.document.export_to_markdown(),
                     metadata={"source": input_file},
                 ),

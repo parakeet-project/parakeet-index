@@ -101,17 +101,17 @@ class BaseVectorStore(BaseComponent, DispatcherSpanMixin):
             f"{self.__class__.__name__} must implement the get_all_documents() method"
         )
 
-    def get_all_document_hashes(self) -> tuple[list[str], list[str], list[str]]:
+    @abstractmethod
+    def delete_by_ref_doc(self, ref_doc_ids: list[str]) -> None:
         """
-        Get all document IDs and hashes from vector store.
+        Delete all chunks whose ref_doc_id matches any of the given parent ids.
 
-        This is a utility method that retrieves document identifiers and their
-        content hashes for deduplication and synchronization purposes.
+        Complements delete_documents(), which deletes by literal vector store
+        id and is unaware of the ref_doc_id relationship.
+
+        Args:
+            ref_doc_ids: Parent document ids whose should be removed.
         """
-        hits = self.get_all_documents()
-
-        ids = [doc.id_ for doc in hits]
-        hashes = [doc.metadata.get("hash", "") for doc in hits]
-        ref_hashes = [doc.metadata.get("ref_doc_hash", "") for doc in hits]
-
-        return ids, hashes, ref_hashes
+        raise NotImplementedError(
+            f"{self.__class__.__name__} must implement the delete_by_ref_doc() method"
+        )

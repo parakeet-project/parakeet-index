@@ -5,7 +5,7 @@ from typing import Any, Literal
 from parakeet_index.core.bridge.pydantic import Field, PrivateAttr
 from parakeet_index.core.document import Document, DocumentWithScore
 from parakeet_index.core.embeddings import BaseEmbedding
-from parakeet_index.core.vector_stores import BaseVectorStore
+from parakeet_index.core.vector_stores import BaseVectorStore, doc_to_metadata_dict
 
 logger = getLogger(__name__)
 
@@ -77,14 +77,19 @@ class ChromaVectorStore(BaseVectorStore):
         chroma_documents = []
 
         for doc in documents:
-            metadatas.append({**doc.metadata, "hash": doc.hash})
+            doc_id = doc.id_ if doc.id_ else str(uuid.uuid4())
+            metadata = doc_to_metadata_dict(doc)
+
+            # Chroma rejects an empty metadata dict (but accepts None), which
+            # happens when a document has neither its own metadata nor a ref_doc_id.
+            metadatas.append(metadata if metadata else None)
 
             embeddings.append(
                 doc.embedding
-                if doc.embedding
-                else self.embed_model.embed_text(doc.get_content()),
+                if doc.embedding is not None
+                else self.embed_model.get_text_embeddings(doc.get_content())[0],
             )
-            ids.append(doc.id_ if doc.id_ else str(uuid.uuid4()))
+            ids.append(doc_id)
             chroma_documents.append(doc.get_content())
 
         self._collection.add(
@@ -98,7 +103,7 @@ class ChromaVectorStore(BaseVectorStore):
 
     def _query_documents(self, query: str, top_k: int = 4) -> list[DocumentWithScore]:
         """Performs a similarity search for the top-k most similar documents."""
-        query_embedding = self.embed_model.embed_text(query)
+        query_embedding = self.embed_model.get_text_embeddings(query)
 
         results = self._collection.query(
             query_embeddings=query_embedding,
@@ -127,6 +132,18 @@ class ChromaVectorStore(BaseVectorStore):
         """
         self._collection.delete(ids=ids)
 
+    def delete_by_ref_doc(self, ref_doc_ids: list[str]) -> None:
+        """
+        Delete all chunks whose ref_doc_id matches any of the given parent ids.
+
+        Args:
+            ref_doc_ids (list[str]): Parent document ids whose chunks should be removed.
+        """
+        if not ref_doc_ids:
+            return
+
+        self._collection.delete(where={"ref_doc_id": {"$in": ref_doc_ids}})
+
     def get_all_documents(
         self, include_fields: list[str] | None = None
     ) -> list[Document]:
@@ -134,7 +151,7 @@ class ChromaVectorStore(BaseVectorStore):
         default_fields = ["documents", "metadatas", "embeddings"]
         include = include_fields if include_fields else default_fields
         field_map = {
-            "ids": "_id",
+            "ids": "id_",
             "documents": "text",
             "metadatas": "metadata",
             "embeddings": "embedding",

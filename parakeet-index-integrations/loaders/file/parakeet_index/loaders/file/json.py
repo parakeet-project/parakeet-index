@@ -47,11 +47,12 @@ class JsonLoader(BaseFileLoader):
             )
 
         documents = []
+        input_file = str(Path(self.input_file).resolve())
         jq_compiler = jq.compile(self.jq_schema)
         json_file = Path(self.input_file).resolve().read_text(encoding="utf-8")
         json_data = jq_compiler.input(json.loads(json_file))
 
-        for content in json_data:
+        for index, content in enumerate(json_data):
             if isinstance(content, str):
                 content = content
             elif isinstance(content, dict):
@@ -62,8 +63,9 @@ class JsonLoader(BaseFileLoader):
             if content.strip() != "":
                 documents.append(
                     Document(
+                        id_=self._stable_id(input_file, str(index)),
                         text=content,
-                        metadata={"source": str(Path(self.input_file).resolve())},
+                        metadata={"source": input_file},
                     ),
                 )
 

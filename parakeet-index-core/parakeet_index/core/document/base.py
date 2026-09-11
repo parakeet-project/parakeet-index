@@ -25,6 +25,10 @@ class BaseDocument(BaseComponent, ABC):
         default=None,
         description="Embedding of the document.",
     )
+    ref_doc_id: str | None = Field(
+        default=None,
+        description="The Id of the parent document.",
+    )
 
     @field_validator("metadata", mode="before")
     @classmethod
@@ -44,10 +48,7 @@ class BaseDocument(BaseComponent, ABC):
     @property
     @abstractmethod
     def hash(self) -> str:
-        """Get document hash."""
-        raise NotImplementedError(
-            f"{self.__class__.__name__} must implement the get_content() method"
-        )
+        """Get hash of document."""
 
 
 class Document(BaseDocument):
@@ -60,13 +61,13 @@ class Document(BaseDocument):
         return "Document"
 
     def get_content(self) -> str:
-        """Get the text content."""
+        """Get document content."""
         return self.text
 
     @computed_field
     @property
     def hash(self) -> str:
-        """Get document hash based on text content."""
+        """Get hash of document."""
         return str(sha256(str(self.text).encode("utf-8", "surrogatepass")).hexdigest())
 
 
@@ -100,6 +101,11 @@ class DocumentWithScore(BaseComponent):
     def metadata(self) -> dict:
         """Get document metadata."""
         return self.document.metadata
+
+    @property
+    def ref_doc_id(self) -> str | None:
+        """Get parent document Id."""
+        return self.document.ref_doc_id if isinstance(self.document, Document) else None
 
     def get_content(self) -> str:
         """Get document content."""

@@ -69,7 +69,7 @@ class SemanticChunker(BaseTextChunker):
         ]
 
         sentences = self._combine_sentences(_sentences)
-        embeddings = self.embed_model.embed_text(
+        embeddings = self.embed_model.get_text_embeddings(
             [x["combined_sentence"] for x in sentences],
         )
 

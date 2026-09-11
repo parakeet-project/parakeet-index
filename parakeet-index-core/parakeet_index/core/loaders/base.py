@@ -1,3 +1,4 @@
+import uuid
 from abc import abstractmethod
 
 from parakeet_index.core.bridge.pydantic import Field
@@ -68,3 +69,8 @@ class BaseFileLoader(BaseLoader):
     def class_name(cls) -> str:
         """Returns the class name of the loader."""
         return "BaseFileLoader"
+
+    @staticmethod
+    def _stable_id(*args: str) -> str:
+        """Determine a stable, deterministic id (uuid5) from identity components."""
+        return str(uuid.uuid5(uuid.NAMESPACE_DNS, ":".join(args)))

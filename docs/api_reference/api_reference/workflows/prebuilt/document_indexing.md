@@ -1,37 +1,37 @@
 ---
-title: Document Ingestion
+title: Document Indexing
 
 ---
 
 === "pip"
 
     ```bash
-    $ pip install "parakeet-workflows[prebuilt]"
+    $ pip install "parakeet-index-workflows-indexing"
     ```
 
 === "uv"
 
     ```bash
-    $ uv add "parakeet-workflows[prebuilt]"
+    $ uv add "parakeet-index-workflows-indexing"
     ```
 
-A prebuilt workflow for document ingestion that handles the complete pipeline of loading, transforming, and storing documents in a vector store.
+A prebuilt workflow for e2e document indexing that handles the complete pipeline of loading, transforming, and storing documents in a vector store.
 
-This workflow orchestrates the document ingestion pipeline with support for:
+This workflow orchestrates the document indexing pipeline with support for:
     - Multiple document loaders (e.g., Docx, PDF, S3)
     - Multiple transformation components (e.g., chunking, embedding)
     - Deduplication strategies
     - Vector store integration
 
-This workflow provides a streamlined approach to building document ingestion pipelines with support for custom transformers and flexible document processing strategies.
+This workflow provides a streamlined approach to building document indexing pipelines with support for custom transformers and flexible document processing strategies.
 
 ## Attributes
 
 | Parameter        | Type                         | Description                                                                                                                                                   |
 | ---------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| transformers     | `list[TransformerComponent]` | List of transformer components to apply to the documents. Transformers are applied in sequence to process and modify documents during the ingestion pipeline. |
+| transformers     | `list[TransformerComponent]` | List of transformer components to apply to the documents. Transformers are applied in sequence to process and modify documents during the indexing pipeline. |
 | doc_strategy     | `DocStrategy, optional`                | Strategy for handling document processing. Defines how documents should be processed and managed throughout the workflow.                                     |
-| post_transformer | `bool, optional`                       | Flag indicating whether to apply post-transformation processing. When enabled, additional processing steps are executed after the main transformers.          |
+| doc_store        | `BaseDocStore, optional`     | Document store for deduplication index. If not provided, deduplication is skipped regardless of `doc_strategy`.                                                |
 | loaders          | `list[BaseLoader], optional`       | Optional loader component for reading documents from various sources. If not provided, documents must be supplied directly to the workflow.                   |
 | vector_store     | `BaseVectorStore, optional`  | Optional vector store for persisting processed documents. When provided, documents are automatically stored after transformation.                             |
 
@@ -39,26 +39,28 @@ This workflow provides a streamlined approach to building document ingestion pip
 ## Example
 
 ```python
-from parakeet_workflows.prebuilt import DocumentIngestionWorkflow
-from parakeet_index.loaders import DirectoryLoader
-from parakeet_index.text_chunkers import TokenChunker
-from parakeet_index.vector_stores import ChromaVectorStore
-from parakeet_index.embeddings import HuggingFaceEmbeddings
+from parakeet_index.workflows.indexing import DocumentIndexingWorkflow
+
+from parakeet_index.core.loaders import DirectoryLoader
+from parakeet_index.core.text_chunkers import TokenTextChunker
+from parakeet_index.docstore.sqlite import SQLiteDocStore
+from parakeet_index.vector_stores.chroma import ChromaVectorStore
+from parakeet_index.embeddings.huggingface import HuggingFaceEmbedding
 
 # Initialize components
 dir_loader = DirectoryLoader(input_dir="./documents")
-chunker = TokenChunker(chunk_size=512, chunk_overlap=50)
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+chunker = TokenTextChunker(chunk_size=512, chunk_overlap=50)
+embeddings = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
 vector_store = ChromaVectorStore(
     collection_name="my_documents",
-    embedding_function=embeddings
+    embed_model=embeddings
 )
 
-# Create ingestion workflow
-workflow = DocumentIngestionWorkflow(
+# Create indexing workflow
+workflow = DocumentIndexingWorkflow(
     transformers=[chunker],
-    doc_strategy="merge",
-    post_transformer=True,
+    doc_strategy="incremental",
+    doc_store=SQLiteDocStore(),
     loaders=[dir_loader],
     vector_store=vector_store
 )
