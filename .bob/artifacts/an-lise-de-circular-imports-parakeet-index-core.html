@@ -1,0 +1,162 @@
+
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>Análise de Circular Imports — parakeet-index-core</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 14px; line-height: 1.6; background: #ffffff; color: #1f2328; padding: 32px 24px; }
+  .container { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 32px; }
+  h2 { font-size: 15px; font-weight: 600; margin: 28px 0 12px; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; }
+  h3 { font-size: 13px; font-weight: 600; margin: 16px 0 6px; color: #1f2328; }
+  p { margin-bottom: 10px; color: #1f2328; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+  .badge-ok    { background: #d1fae5; color: #065f46; }
+  .badge-fixed { background: #dbeafe; color: #1e40af; }
+  .badge-warn  { background: #fef3c7; color: #92400e; }
+  .badge-risk  { background: #fee2e2; color: #991b1b; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+  th { text-align: left; padding: 7px 10px; background: #f7f8fa; border: 1px solid #e5e7eb; font-weight: 600; color: #57606a; font-size: 12px; }
+  td { padding: 7px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  tr:hover td { background: #f7f8fa; }
+  code { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 3px; padding: 1px 5px; }
+  .flow { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 16px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; line-height: 1.8; margin: 10px 0 16px; color: #1f2328; }
+  .flow .arrow { color: #57606a; }
+  .flow .err   { color: #dc2626; font-weight: 600; }
+  .flow .ok    { color: #059669; font-weight: 600; }
+  .flow .note  { color: #57606a; font-style: italic; }
+  .section-ok { border-left: 3px solid #10b981; padding-left: 12px; margin-bottom: 8px; }
+  .section-warn { border-left: 3px solid #f59e0b; padding-left: 12px; margin-bottom: 8px; }
+  .section-fixed { border-left: 3px solid #3b82f6; padding-left: 12px; margin-bottom: 8px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+  .summary-card { border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px; background: #f7f8fa; text-align: center; }
+  .summary-card .num { font-size: 28px; font-weight: 700; }
+  .summary-card .label { font-size: 11px; color: #57606a; margin-top: 2px; }
+  .num-ok    { color: #059669; }
+  .num-fixed { color: #3b82d4; }
+  .num-warn  { color: #d97706; }
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #e5e7eb; text-align: center; font-size: 12px; color: #57606a; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Análise de Circular Imports</h1>
+  <p class="subtitle">parakeet-index-core · todos os módulos internos e integrações · varredura completa</p>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="num num-ok">46</div>
+      <div class="label">módulos verificados</div>
+    </div>
+    <div class="summary-card">
+      <div class="num num-fixed">1</div>
+      <div class="label">ciclo corrigido (publicar 0.1.3)</div>
+    </div>
+    <div class="summary-card">
+      <div class="num num-warn">1</div>
+      <div class="label">dependência de ordem frágil</div>
+    </div>
+  </div>
+
+  <h2>1. Ciclo corrigido no repositório — ainda não publicado</h2>
+  <div class="section-fixed">
+    <h3><span class="badge badge-fixed">CORRIGIDO · publicar 0.1.3</span>   core/llms/base.py ↔ instrumentation/events/llm.py</h3>
+    <p>A versão <code>0.1.2</code> no PyPI ainda contém o import de nível de módulo que causou o erro do usuário. O repositório já tem a correção (imports lazy dentro das funções), mas precisa ser publicado.</p>
+    <div class="flow">
+<span class="note"># versão PyPI 0.1.2 — QUEBRADO</span>
+watsonx/base.py
+  <span class="arrow">→</span> events/llm.py                  <span class="note"># começa a carregar</span>
+      <span class="arrow">→</span> core.llms.schemas              <span class="note"># dispara core/llms/__init__</span>
+          <span class="arrow">→</span> core/llms/base.py (PyPI)
+              <span class="arrow">→</span> events/llm.py              <span class="err"># ainda em init! ImportError</span>
+
+<span class="note"># repositório atual — OK</span>
+core/llms/base.py
+  <span class="arrow">→</span> (topo) core.instrumentation, core.llms.schemas, core.observability
+  <span class="arrow">→</span> (lazy, dentro de completion())     events/llm.LLMCompletionStartEvent
+  <span class="arrow">→</span> (lazy, dentro de chat_completion()) events/llm.LLMChatStartEvent    <span class="ok"># sem ciclo</span>
+    </div>
+    <p><strong>Ação:</strong> fazer build e publicar <code>parakeet-index-core==0.1.3</code> (bump já aplicado no <code>pyproject.toml</code>).</p>
+  </div>
+
+  <h2>2. Dependência de ordem frágil (não é ciclo, mas é risco)</h2>
+  <div class="section-warn">
+    <h3><span class="badge badge-warn">ATENÇÃO</span>   core/loaders/directory.py importa do próprio pacote pai</h3>
+    <p><code>directory.py</code> faz <code>from parakeet_index.core.loaders import BaseFileLoader, BaseLoader</code>, que aponta para o <code>__init__</code> do mesmo pacote que está importando <code>directory.py</code>. Funciona hoje porque o <code>__init__</code> importa <code>base</code> antes de <code>directory</code>, então <code>BaseLoader</code> e <code>BaseFileLoader</code> já estão no módulo parcial quando <code>directory.py</code> é carregado.</p>
+    <div class="flow">
+<span class="note"># core/loaders/__init__.py</span>
+line 1: from parakeet_index.core.loaders.base      import BaseFileLoader, BaseLoader  <span class="ok"># ✓</span>
+line 2: from parakeet_index.core.loaders.directory import DirectoryLoader             <span class="note"># dispara directory.py</span>
+
+<span class="note"># core/loaders/directory.py</span>
+line 8: from parakeet_index.core.loaders import BaseFileLoader, BaseLoader
+         <span class="arrow">↑</span> encontra o módulo parcial, que JÁ TEM BaseLoader (linha 1 do __init__ já rodou)  <span class="ok"># ✓</span>
+
+<span class="note"># RISCO: se alguém inverter a ordem das linhas no __init__ ou adicionar
+# um import de base.py antes da linha 1 → NameError em runtime.</span>
+    </div>
+    <p><strong>Recomendação:</strong> trocar o import em <code>directory.py</code> linha 8 para apontar diretamente ao módulo concreto:</p>
+    <div class="flow">
+<span class="err">- from parakeet_index.core.loaders import BaseFileLoader, BaseLoader</span>
+<span class="ok">+ from parakeet_index.core.loaders.base import BaseFileLoader, BaseLoader</span>
+    </div>
+  </div>
+
+  <h2>3. Módulos com import de eventos no topo — verificados como OK</h2>
+  <p>Os padrões abaixo importam eventos no nível de módulo (<em>não</em> lazy). Foram testados em todas as ordens de importação e não apresentam ciclo porque os arquivos de eventos não importam de volta o pacote base correspondente.</p>
+  <table>
+    <thead>
+      <tr><th>Módulo base</th><th>Evento importado</th><th>Evento importa de volta?</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>core/embeddings/base.py</code></td><td><code>events/embedding.py</code></td><td>Não — apenas <code>BaseEvent</code> externo</td><td><span class="badge badge-ok">OK</span></td></tr>
+      <tr><td><code>core/loaders/base.py</code></td><td><code>events/loader.py</code></td><td><code>core.document</code> apenas (sem ciclo)</td><td><span class="badge badge-ok">OK</span></td></tr>
+      <tr><td><code>core/retrievers/base.py</code></td><td><code>events/retrieval.py</code></td><td><code>core.document</code> apenas (sem ciclo)</td><td><span class="badge badge-ok">OK</span></td></tr>
+      <tr><td><code>core/vector_stores/base.py</code></td><td><code>events/retrieval.py</code></td><td><code>core.document</code> apenas (sem ciclo)</td><td><span class="badge badge-ok">OK</span></td></tr>
+      <tr><td><code>core/text_chunkers/base.py</code></td><td><code>events/text_chunker.py</code></td><td><code>core.document</code> apenas (sem ciclo)</td><td><span class="badge badge-ok">OK</span></td></tr>
+    </tbody>
+  </table>
+  <p>O motivo pelo qual <code>events/llm.py</code> era o único problemático: é o único evento que precisa de <code>ChatMessage</code>, <code>ChatResponse</code> e <code>CompletionResponse</code>, que vivem em <code>core.llms.schemas</code> — o mesmo pacote que usa <code>events/llm.py</code>.</p>
+
+  <h2>4. Varredura completa — todos os outros módulos</h2>
+  <table>
+    <thead>
+      <tr><th>Área</th><th>Módulos</th><th>Resultado</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>core/__init__</td><td>→ instrumentation (externo)</td><td><span class="badge badge-ok">OK</span></td></tr>
+      <tr><td>core/components</td><td>→ bridge/pydantic · TYPE_CHECKING: document</td><td><span class="badge badge-ok">OK</span></td></tr>
+      <tr><td>core/document</td><td>→ bridge/pydantic, components</td><td><span class="badge badge-ok">OK</span></td></tr>
+      <tr><td>core/llms/schemas</td><td>→ bridge/pydantic, llms/enums, utils/validation</td><td><span class="badge badge-ok">OK</span></td></tr>
+      <tr><td>core/text_chunkers/semantic</td><td>→ core.embeddings (cross-package)</td><td><span class="badge badge-ok">OK</span></td></tr>
+      <tr><td>core/evals/context_similarity</td><td>→ core.embeddings (cross-package)</td><td><span class="badge badge-ok">OK</span></td></tr>
+      <tr><td>integrações (llms, embeddings, loaders…)</td><td>→ apenas core.* (sentido único)</td><td><span class="badge badge-ok">OK</span></td></tr>
+      <tr><td>workflows/indexing</td><td>→ core.* sem retorno</td><td><span class="badge badge-ok">OK</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Ações recomendadas</h2>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Ação</th><th>Prioridade</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Publicar <code>parakeet-index-core==0.1.3</code> com o fix dos imports lazy em <code>base.py</code> (bump já feito no <code>pyproject.toml</code>)</td>
+        <td><span class="badge badge-risk">Alta</span></td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Em <code>core/loaders/directory.py</code> linha 8: mudar para <code>from parakeet_index.core.loaders.base import ...</code> para eliminar a dependência de ordem frágil no <code>__init__</code></td>
+        <td><span class="badge badge-warn">Média</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer>Made with IBM Bob</footer>
+</div>
+</body>
+</html>
