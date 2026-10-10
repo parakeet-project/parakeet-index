@@ -5,7 +5,7 @@ from typing import Type
 
 from parakeet_index.core.bridge.pydantic import Field, field_validator
 from parakeet_index.core.document import Document
-from parakeet_index.core.loaders import BaseFileLoader, BaseLoader
+from parakeet_index.core.loaders.base import BaseFileLoader, BaseLoader
 
 
 def _get_default_file_loaders() -> dict[str, Type[BaseFileLoader]]:
